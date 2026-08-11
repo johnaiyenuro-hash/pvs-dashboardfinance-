@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Wealth Operating System v4 — Unified Edition</title>
+<title>Wealth Operating System v5 — Dynamic Budget Integration</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -23,8 +23,6 @@
     --muted:     #6b7280;
   }
 
-  html { scroll-behavior: smooth; }
-
   body {
     font-family: 'Syne', sans-serif;
     background: var(--bg);
@@ -36,14 +34,13 @@
 
   .container { max-width: 1100px; margin: 0 auto; }
 
-  /* HEADER */
   header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     border-bottom: 1px solid var(--border);
     padding-bottom: 24px;
-    margin-bottom: 32px;
+    margin-bottom: 24px;
     flex-wrap: wrap;
     gap: 16px;
   }
@@ -59,54 +56,8 @@
 
   h1 { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.03em; }
 
-  .nav-tabs {
-    display: flex;
-    gap: 8px;
-    margin-top: 12px;
-  }
-
-  .tab-btn {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--muted);
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.78rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .tab-btn.active, .tab-btn:hover {
-    color: var(--text);
-    border-color: var(--accent);
-    background: var(--surface2);
-  }
-
-  /* SCRIPTURE BANNER */
-  .scripture-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-left: 4px solid var(--accent);
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 32px;
-  }
-
-  .scripture-title {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.75rem;
-    color: var(--accent);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-
-  .scripture-quote { font-size: 0.92rem; color: var(--text); font-style: italic; }
-  .scripture-ref { font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--muted); margin-top: 6px; }
-
-  /* OVERALL PROGRESS BAR */
-  .overall-card {
+  /* CASH FLOW CALCULATOR ENGINE */
+  .budget-engine {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 12px;
@@ -114,153 +65,110 @@
     margin-bottom: 32px;
   }
 
-  .overall-header {
+  .engine-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 12px;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
   }
 
-  .overall-title { font-size: 1.1rem; font-weight: 700; }
-  .overall-pct { font-family: 'Space Mono', monospace; font-size: 1.6rem; font-weight: 700; color: var(--accent); }
-
-  .bar-bg {
+  .engine-title { font-size: 1.2rem; font-weight: 700; }
+  .engine-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
     background: var(--surface2);
-    border-radius: 999px;
-    height: 12px;
-    overflow: hidden;
     border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 6px;
+    color: var(--accent);
   }
 
-  .bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--blue), var(--green), var(--accent));
-    border-radius: 999px;
-    transition: width 0.4s ease;
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
   }
 
-  /* SECTION HEADINGS */
-  .section-title {
-    font-size: 1.25rem;
+  .metric-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+
+  .metric-label { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--muted); margin-bottom: 4px; }
+  .metric-val { font-family: 'Space Mono', monospace; font-size: 1.3rem; font-weight: 700; color: var(--text); }
+  .metric-sub { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+
+  /* IMPACT DIAGNOSTIC BOXES */
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 32px; }
+
+  .impact-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .impact-card.help { border-top: 4px solid var(--green); }
+  .impact-card.hinder { border-top: 4px solid var(--orange); }
+
+  .impact-title {
+    font-size: 1rem;
     font-weight: 700;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
     display: flex;
     align-items: center;
     gap: 8px;
   }
 
-  .section-title::before {
-    content: '';
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    background: var(--accent);
-    border-radius: 50%;
+  .impact-list { list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 0.88rem; }
+  .impact-list li { position: relative; padding-left: 18px; color: var(--text); }
+  .impact-list li::before {
+    position: absolute; left: 0; font-family: 'Space Mono', monospace; font-weight: bold;
   }
+  .help .impact-list li::before { content: "✓"; color: var(--green); }
+  .hinder .impact-list li::before { content: "⚠"; color: var(--orange); }
 
-  /* GOAL CARDS GRID */
-  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 32px; }
-  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-bottom: 32px; }
-
-  .card {
+  /* PROJECTION ACCELERATOR CARD */
+  .proj-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-    position: relative;
-    transition: border-color 0.2s;
-  }
-
-  .card:hover { border-color: #353c4f; }
-
-  .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
-  .card-label { font-size: 0.95rem; font-weight: 700; }
-  .card-val { font-family: 'Space Mono', monospace; font-size: 0.82rem; color: var(--muted); }
-
-  .card-target { font-family: 'Space Mono', monospace; font-size: 1.4rem; font-weight: 700; color: var(--text); margin-bottom: 12px; }
-  
-  .btn-edit {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.7rem;
-    cursor: pointer;
-  }
-  .btn-edit:hover { border-color: var(--accent); color: var(--accent); }
-
-  /* ACTION & MILESTONE LISTS */
-  .action-item {
-    display: flex;
-    gap: 12px;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 0.88rem;
-  }
-  .action-item:last-child { border-bottom: none; }
-  
-  .action-num {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.75rem;
-    color: var(--accent);
-    font-weight: bold;
-    min-width: 20px;
-  }
-
-  /* AFFIRMATION PILLS */
-  .aff-list { display: flex; flex-direction: column; gap: 10px; }
-  .aff-item {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    padding: 10px 14px;
-    border-radius: 8px;
-    font-size: 0.85rem;
-  }
-
-  /* NEXT ACTION BANNER */
-  .next-action {
-    background: linear-gradient(135deg, rgba(232, 255, 74, 0.08), rgba(74, 255, 180, 0.04));
-    border: 1px solid var(--accent);
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 32px;
   }
-  .next-action-label { font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--accent); text-transform: uppercase; margin-bottom: 4px; }
-  .next-action-text { font-size: 1rem; font-weight: 700; }
 
-  /* MODAL */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.8);
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-  }
-  .modal-overlay.open { display: flex; }
+  .table-mini { width: 100%; border-collapse: collapse; font-family: 'Space Mono', monospace; font-size: 0.82rem; margin-top: 12px; }
+  .table-mini th { text-align: left; border-bottom: 1px solid var(--border); padding: 8px 4px; color: var(--muted); }
+  .table-mini td { padding: 8px 4px; border-bottom: 1px solid #1a1e2a; }
 
-  .modal {
-    background: var(--surface);
+  /* DYNAMIC MODAL & INPUTS */
+  .input-field {
+    background: var(--bg);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 24px;
-    width: 90%;
-    max-width: 420px;
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    padding: 6px 10px;
+    border-radius: 6px;
+    width: 100%;
+    margin-top: 4px;
   }
 
-  .modal-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
-  .modal-sub { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--muted); margin-bottom: 16px; }
-  
-  .modal-input-val { font-family: 'Space Mono', monospace; font-size: 1.5rem; font-weight: 700; color: var(--accent); text-align: center; margin-bottom: 16px; }
-  
-  input[type=range] { width: 100%; margin-bottom: 20px; accent-color: var(--accent); }
-
-  .modal-btns { display: flex; gap: 8px; justify-content: flex-end; }
-  .btn-save { background: var(--accent); color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; cursor: pointer; }
-  .btn-cancel { background: transparent; color: var(--muted); border: 1px solid var(--border); padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+  .btn-accent {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+  }
 </style>
 </head>
 <body>
@@ -268,205 +176,166 @@
 <div class="container">
   <header>
     <div>
-      <div class="header-tag">// SERVE GOD WIDDIT — WEALTH OS V4</div>
-      <h1>Stewardship & Wealth Dashboard</h1>
+      <div class="header-tag">// SERVE GOD WIDDIT — WEALTH OS V5</div>
+      <h1>Budget-Anchored Wealth System</h1>
     </div>
-    <div class="nav-tabs">
-      <button class="tab-btn active" onclick="scrollToSec('sec-overview')">Overview</button>
-      <button class="tab-btn" onclick="scrollToSec('sec-targets')">Targets & Vision</button>
-      <button class="tab-btn" onclick="scrollToSec('sec-execution')">Execution & Rules</button>
+    <div style="text-align: right;">
+      <span class="engine-badge">Synced with Excel: Rigid Budget Projections</span>
     </div>
   </header>
 
-  <div class="next-action">
-    <div class="next-action-label">// SINGLE NEXT ACTION FOCUS</div>
-    <div class="next-action-text">Pass Glider Probation (~Oct 2026) ➔ Increase NEST Pension to 8% (Global Equity Index) ➔ Open Daniel's HL Junior ISA.</div>
-  </div>
-
-  <div class="scripture-card">
-    <div class="scripture-title">Genesis 41:33–36 (AMPC) — Faith & Strategy Foundation</div>
-    <div class="scripture-quote">
-      "So now let Pharaoh select a man discreet, understanding, and wise, and set him over the land of Egypt... let them gather all the food of those good years that are coming and store up grain... That food shall be kept in store for the land against the seven years of famine..."
+  <div class="budget-engine">
+    <div class="engine-header">
+      <div class="engine-title">📊 Live Budget Engine (Monthly Income vs Target Capital)</div>
+      <button class="btn-accent" onclick="recalculate()">Recalculate Projections</button>
     </div>
-    <div class="scripture-ref">Core Stewardship Alignment — Wisdom, Storage, and Generational Provision.</div>
-  </div>
 
-  <div class="overall-card" id="sec-overview">
-    <div class="overall-header">
-      <div>
-        <div class="overall-title">Overall Financial Vision Progress</div>
-        <div style="font-size:0.8rem; color:var(--muted); font-family:'Space Mono';">Weighted Average across Core 5 Vision Milestones</div>
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-label">Joint Net Income</div>
+        <div class="metric-val">£<span id="val-income">4,530</span></div>
+        <div class="metric-sub">Base Take-Home Pay</div>
       </div>
-      <div class="overall-pct" id="overall-pct">0%</div>
-    </div>
-    <div class="bar-bg">
-      <div class="bar-fill" id="overall-bar" style="width: 0%;"></div>
-    </div>
-  </div>
-
-  <div id="sec-targets">
-    <div class="section-title">Core Vision Targets & Progress</div>
-    <div class="grid-2" id="cards-container">
+      <div class="metric-card">
+        <div class="metric-label">Blessed Reminder (10%)</div>
+        <div class="metric-val" style="color:var(--accent);">£<span id="val-tithe">453</span></div>
+        <div class="metric-sub">Tithe / Stewardship Portion</div>
       </div>
-  </div>
-
-  <div class="grid-2" id="sec-execution">
-    <div>
-      <div class="section-title">Daily Faith & Wealth Affirmations</div>
-      <div class="aff-list">
-        <div class="aff-item">✨ "God gives me the power to get wealth to establish His covenant."</div>
-        <div class="aff-item">🛡️ "I am a prudent steward — storing food in the summer and gathering in harvest."</div>
-        <div class="aff-item">📈 "My active income builds my base; my investments build my freedom."</div>
-        <div class="aff-item">👶 "I lay up an inheritance for my children's children through disciplined execution."</div>
+      <div class="metric-card">
+        <div class="metric-label">Fixed Bills & Outgoings</div>
+        <div class="metric-val" style="color:var(--orange);">£<span id="val-bills">1,843</span></div>
+        <div class="metric-sub">Rent, Utilities, Council Tax</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Target Investment Pot</div>
+        <div class="metric-val" style="color:var(--green);">£<span id="val-savings">906</span></div>
+        <div class="metric-sub">ISA, NS&I, Tandem, Junior ISA</div>
       </div>
     </div>
 
-    <div>
-      <div class="section-title">Glider & Career Milestones</div>
-      <div class="card">
-        <div class="action-item">
-          <span class="action-num">01</span>
-          <div><strong>Digital Delivery Manager (Glider)</strong><br/><span style="color:var(--muted); font-size:0.8rem;">Initial: £35,000 | Post-Probation Target: £37,000 (~Oct 2026)</span></div>
-        </div>
-        <div class="action-item">
-          <span class="action-num">02</span>
-          <div><strong>Contract Safeguards & IP</strong><br/><span style="color:var(--muted); font-size:0.8rem;">Ensure pre-dated side-hustle assets (Gumroad/Conduit) observe secondary employment clauses.</span></div>
-        </div>
-        <div class="action-item">
-          <span class="action-num">03</span>
-          <div><strong>Pension & Fund Switching</strong><br/><span style="color:var(--muted); font-size:0.8rem;">Set NEST rate to 8% and shift allocation from default lifestyle fund to Global Equity Index.</span></div>
-        </div>
+    <div id="gap-alert" style="background: rgba(255,107,74,0.1); border: 1px solid var(--orange); padding: 12px; border-radius: 8px; font-size: 0.85rem; font-family:'Space Mono';">
+      ⚠️ <strong>Budget Gap Identified in Model:</strong> Target savings (£906) currently exceeds available uncommitted balance (£778) by <strong>£127.99/mo</strong>. Unbudgeted spending will immediately hinder your 5-year portfolio target.
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="impact-card help">
+      <div class="impact-title">
+        <span style="color:var(--green)">▲ How Current Budgeting HELPS Future Wealth</span>
+      </div>
+      <ul class="impact-list">
+        <li><strong>Disciplined Capital Allocation:</strong> Allocating £906/month (20% joint net rate) compounds into ~£1.07M over 40 years in your rigid projection model.</li>
+        <li><strong>Protected Emergency Target:</strong> Fixed living outgoings capped at £1,842.99 establishes an exact 3-month safety threshold of £5,528.97 in liquid funds.</li>
+        <li><strong>Multi-Pot Diversification:</strong> Spreading monthly cash flow across Trading 212 (£543.60), NS&I (£181.20), Tandem (£181.20), and HL Junior ISA (£25) balances liquidity and long-term equity growth.</li>
+      </ul>
+    </div>
+
+    <div class="impact-card hinder">
+      <div class="impact-title">
+        <span style="color:var(--orange)">▼ How Current Budgeting HINDERS Future Wealth</span>
+      </div>
+      <ul class="impact-list">
+        <li><strong>The £127.99 Monthly Deficit Risk:</strong> Your planned investment pots (£906) exceed post-essential cash (£778.01). Without strict control on food/personal spend, savings get diluted.</li>
+        <li><strong>Delayed Pension Match:</strong> Operating at £35k pre-probation limits NEST match until October 2026. Delaying the 8% switch leaves free employer money on the table.</li>
+        <li><strong>Discretionary Leakage:</strong> Weekly money check-ins highlight "eating out" as an avoidable leak that directly threatens the Trading 212 monthly allocation.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="proj-card">
+    <div style="font-weight:700; font-size:1.1rem; margin-bottom:8px;">🎯 Budget Allocation vs. Projected Outcome</div>
+    <div style="color:var(--muted); font-size:0.82rem;">Mapped directly from the <em>Rigid Budget Projections</em> spreadsheet sheet.</div>
+
+    <table class="table-mini">
+      <thead>
+        <tr>
+          <th>Pot / Goal</th>
+          <th>Provider / Account</th>
+          <th>Monthly Input</th>
+          <th>Annual Growth Rate</th>
+          <th>40-Yr Projected Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Emergency Buffer</strong></td>
+          <td>NS&I Premium Bonds</td>
+          <td>£181.20</td>
+          <td>3.0%</td>
+          <td>~£167,800</td>
+        </tr>
+        <tr>
+          <td><strong>Investing (Core)</strong></td>
+          <td>Trading 212 Stocks ISA</td>
+          <td>£543.60</td>
+          <td>5.0%</td>
+          <td>~£801,000</td>
+        </tr>
+        <tr>
+          <td><strong>Cash Savings</strong></td>
+          <td>Tandem Savings Account</td>
+          <td>£181.20</td>
+          <td>3.4%</td>
+          <td>~£182,300</td>
+        </tr>
+        <tr>
+          <td><strong>Daniel's Future</strong></td>
+          <td>HL Junior ISA</td>
+          <td>£25.00</td>
+          <td>5.0%</td>
+          <td>~£36,800</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="budget-engine" style="border-color:var(--accent);">
+    <div class="engine-title" style="color:var(--accent); margin-bottom:12px;">⚡ 3-Step Action Plan to Eliminating Budget Friction</div>
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:16px;">
+      <div style="background:var(--surface2); padding:16px; border-radius:8px;">
+        <div style="font-family:'Space Mono'; color:var(--accent); font-size:0.75rem;">STEP 1 — IMMEDIATE</div>
+        <div style="font-weight:700; margin:4px 0;">Cap Discretionary Spend</div>
+        <div style="font-size:0.82rem; color:var(--muted);">Strictly cap eating out to eliminate the £127.99 monthly deficit between balance and target savings.</div>
+      </div>
+      <div style="background:var(--surface2); padding:16px; border-radius:8px;">
+        <div style="font-family:'Space Mono'; color:var(--green); font-size:0.75rem;">STEP 2 — OCT 2026</div>
+        <div style="font-weight:700; margin:4px 0;">Glider Probation & Pension Switch</div>
+        <div style="font-size:0.82rem; color:var(--muted);">Upon £37k salary bump, trigger the 8% NEST contribution and assign to the Global Equity Index fund.</div>
+      </div>
+      <div style="background:var(--surface2); padding:16px; border-radius:8px;">
+        <div style="font-family:'Space Mono'; color:var(--blue); font-size:0.75rem;">STEP 3 — ONGOING</div>
+        <div style="font-weight:700; margin:4px 0;">Automate Payday Transfers</div>
+        <div style="font-size:0.82rem; color:var(--muted);">Set standing orders for Trading 212 and NS&I on the 28th of every month so savings are never spent.</div>
       </div>
     </div>
   </div>
 
-  <div style="margin-top: 16px;">
-    <div class="section-title">Wealth Operating System — Non-Negotiables</div>
-    <div class="grid-3">
-      <div class="card">
-        <div style="font-weight:700; color:var(--accent); margin-bottom:6px;">1. The Blessed Reminder</div>
-        <div style="font-size:0.85rem; color:var(--muted);">Tithe/Giving set as the first outflow before budgeting living outgoings or savings.</div>
-      </div>
-      <div class="card">
-        <div style="font-weight:700; color:var(--green); margin-bottom:6px;">2. Automation First</div>
-        <div style="font-size:0.85rem; color:var(--muted);">Emergency Buffer (NS&I / Tandem), Trading 212 ISA, and Junior ISA contributions transferred at payday.</div>
-      </div>
-      <div class="card">
-        <div style="font-weight:700; color:var(--blue); margin-bottom:6px;">3. Aggressive Equity Stance</div>
-        <div style="font-size:0.85rem; color:var(--muted);">Pension and long-term funds remain 100% equity index focused over the ~30-year horizon.</div>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<div class="modal-overlay" id="modal-overlay">
-  <div class="modal">
-    <div class="modal-title" id="modal-title">Edit Target Progress</div>
-    <div class="modal-sub" id="modal-sub">// Enter current progress amount</div>
-    <div class="modal-input-val" id="modal-val">£0</div>
-    <input type="range" id="modal-slider" min="0" max="100" value="0"/>
-    <div class="modal-btns">
-      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-save" onclick="saveProgress()">Save Progress</button>
-    </div>
-  </div>
 </div>
 
 <script>
-  const goals = [
-    { label: 'Emergency Fund Buffer', max: 14000, unit: '£', color: 'var(--green)' },
-    { label: 'Base Salary Trajectory', max: 50000, unit: '£', color: 'var(--accent)' },
-    { label: 'Trading 212 ISA Growth', max: 100000, unit: '£', color: 'var(--blue)' },
-    { label: 'House Deposit / Property', max: 50000, unit: '£', color: 'var(--purple)' },
-    { label: 'The £1,000,000 Milestone', max: 1000000, unit: '£', color: 'var(--orange)' }
-  ];
+  function recalculate() {
+    const inc = 4530;
+    const tithe = inc * 0.10;
+    const savings = 906;
+    const bills = 1842.99;
+    const remaining = inc - tithe - bills;
 
-  let progress = JSON.parse(localStorage.getItem('wos_unified_v4')) || [1000, 35000, 500, 0, 1000];
-  let editingIdx = null;
+    document.getElementById('val-income').textContent = inc.toLocaleString();
+    document.getElementById('val-tithe').textContent = tithe.toLocaleString();
+    document.getElementById('val-bills').textContent = Math.round(bills).toLocaleString();
+    document.getElementById('val-savings').textContent = savings.toLocaleString();
 
-  function renderCards() {
-    const container = document.getElementById('cards-container');
-    container.innerHTML = '';
-
-    goals.forEach((g, i) => {
-      const cur = progress[i] || 0;
-      const pct = Math.min(100, Math.round((cur / g.max) * 100));
-
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.innerHTML = `
-        <div class="card-top">
-          <div class="card-label">${g.label}</div>
-          <button class="btn-edit" onclick="openModal(${i})">Edit Progress</button>
-        </div>
-        <div class="card-target">
-          ${g.unit}${cur.toLocaleString('en-GB')} <span style="font-size:0.8rem; font-weight:400; color:var(--muted);">/ ${g.unit}${g.max.toLocaleString('en-GB')}</span>
-        </div>
-        <div class="overall-header" style="margin-bottom:6px;">
-          <span style="font-family:'Space Mono'; font-size:0.75rem; color:var(--muted);">Completion</span>
-          <span style="font-family:'Space Mono'; font-size:0.85rem; font-weight:700; color:${g.color}">${pct}%</span>
-        </div>
-        <div class="bar-bg">
-          <div class="bar-fill" style="width: ${pct}%; background: ${g.color};"></div>
-        </div>
-      `;
-      container.appendChild(card);
-    });
-
-    updateOverall();
-  }
-
-  function updateOverall() {
-    let totalPct = 0;
-    goals.forEach((g, i) => {
-      totalPct += Math.min(1, (progress[i] || 0) / g.max);
-    });
-    const avg = Math.round((totalPct / goals.length) * 100);
-    document.getElementById('overall-pct').textContent = avg + '%';
-    document.getElementById('overall-bar').style.width = avg + '%';
-  }
-
-  function openModal(idx) {
-    editingIdx = idx;
-    const g = goals[idx];
-    document.getElementById('modal-title').textContent = g.label;
-    document.getElementById('modal-sub').textContent = `// Set current amount in ${g.unit}`;
-    
-    const slider = document.getElementById('modal-slider');
-    slider.max = g.max;
-    slider.step = Math.max(1, Math.floor(g.max / 200));
-    slider.value = progress[idx] || 0;
-    
-    updateModalDisplay();
-    document.getElementById('modal-overlay').classList.add('open');
-  }
-
-  function updateModalDisplay() {
-    const val = +document.getElementById('modal-slider').value;
-    document.getElementById('modal-val').textContent = '£' + val.toLocaleString('en-GB');
-  }
-
-  document.getElementById('modal-slider').addEventListener('input', updateModalDisplay);
-
-  function closeModal() {
-    document.getElementById('modal-overlay').classList.remove('open');
-  }
-
-  function saveProgress() {
-    if (editingIdx !== null) {
-      progress[editingIdx] = +document.getElementById('modal-slider').value;
-      localStorage.setItem('wos_unified_v4', JSON.stringify(progress));
-      renderCards();
-      closeModal();
+    const gap = savings - remaining;
+    const alertBox = document.getElementById('gap-alert');
+    if (gap > 0) {
+      alertBox.style.display = 'block';
+      alertBox.innerHTML = `⚠️ <strong>Budget Gap Identified in Model:</strong> Target savings (£${savings}) currently exceeds available uncommitted balance (£${Math.round(remaining)}) by <strong>£${gap.toFixed(2)}/mo</strong>. Unbudgeted spending will immediately hinder your 5-year portfolio target.`;
+    } else {
+      alertBox.style.display = 'none';
     }
   }
 
-  function scrollToSec(id) {
-    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
-  }
-
-  renderCards();
+  recalculate();
 </script>
 </body>
 </html>
