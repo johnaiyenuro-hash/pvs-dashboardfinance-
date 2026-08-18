@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Wealth Operating System v6.4 — God's Money Live Engine</title>
+<title>Wealth Operating System v8 — Live Cloud Edition</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
@@ -58,76 +58,43 @@
 
   h1 { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.03em; }
 
-  /* EXCEL UPLOAD BOX */
+  /* SYNC STATUS BAR */
   .sync-card {
     background: var(--surface);
-    border: 2px dashed var(--border);
+    border: 1px solid var(--border);
     border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 16px;
-    transition: all 0.2s ease;
   }
 
-  .sync-card.dragover {
-    border-color: var(--accent);
-    background: rgba(232, 255, 74, 0.05);
-  }
+  .sync-left { display: flex; align-items: center; gap: 12px; }
+  .sync-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); }
+  .sync-dot.loading { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+  .sync-dot.error { background: var(--orange); box-shadow: 0 0 8px var(--orange); }
 
-  .sync-left { display: flex; align-items: center; gap: 14px; }
-  .sync-icon { font-size: 1.8rem; }
-  .sync-title { font-size: 0.95rem; font-weight: 700; }
-  .sync-sub { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--muted); }
+  .sync-title { font-size: 0.92rem; font-weight: 700; }
+  .sync-sub { font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--muted); }
 
-  .file-btn-wrapper {
-    position: relative;
-    overflow: hidden;
-    display: inline-block;
-  }
-
-  .btn-upload {
-    background: var(--accent);
-    color: #000;
+  .btn-action {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--accent);
     font-family: 'Space Mono', monospace;
     font-size: 0.75rem;
     font-weight: 700;
-    padding: 10px 18px;
+    padding: 8px 16px;
     border-radius: 6px;
     cursor: pointer;
-    border: none;
+    transition: all 0.2s ease;
   }
-
-  .file-input {
-    position: absolute;
-    left: 0;
-    top: 0;
-    opacity: 0;
-    width: 100%;
-    height: 100%;
-    cursor: pointer;
-  }
-
-  /* TOAST NOTIFICATION */
-  .sync-toast {
-    display: none;
-    background: rgba(74, 255, 180, 0.1);
-    border: 1px solid var(--green);
-    color: var(--green);
-    padding: 12px 16px;
-    border-radius: 8px;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.8rem;
-    margin-bottom: 24px;
-    animation: fadeIn 0.3s ease;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-4px); }
-    to { opacity: 1; transform: translateY(0); }
+  .btn-action:hover {
+    border-color: var(--accent);
+    background: rgba(232, 255, 74, 0.08);
   }
 
   /* SCRIPTURE */
@@ -141,8 +108,8 @@
   .scripture-quote { font-family: 'Space Mono', monospace; font-size: 0.8rem; color: var(--text); font-style: italic; }
   .scripture-ref { font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--accent); margin-top: 4px; }
 
-  /* CASH FLOW ENGINE */
-  .budget-engine {
+  /* OVERALL TRAJECTORY PROGRESS */
+  .overall-card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 12px;
@@ -150,16 +117,85 @@
     margin-bottom: 24px;
   }
 
-  .engine-header {
+  .overall-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-    gap: 12px;
+    align-items: flex-end;
+    margin-bottom: 12px;
   }
 
-  .engine-title { font-size: 1.15rem; font-weight: 700; }
+  .overall-title { font-size: 1.1rem; font-weight: 700; }
+  .overall-pct { font-family: 'Space Mono', monospace; font-size: 1.6rem; font-weight: 700; color: var(--accent); }
+
+  .bar-bg {
+    background: var(--surface2);
+    border-radius: 999px;
+    height: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue), var(--green), var(--accent));
+    border-radius: 999px;
+    transition: width 0.4s ease;
+  }
+
+  /* SECTION TITLES */
+  .section-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+
+  /* GRIDS & CARDS */
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 24px; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+  }
+
+  .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+  .card-label { font-size: 0.92rem; font-weight: 700; }
+  .card-val { font-family: 'Space Mono', monospace; font-size: 1.35rem; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+  .card-sub { font-size: 0.75rem; color: var(--muted); font-family: 'Space Mono', monospace; }
+
+  .btn-edit {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    cursor: pointer;
+  }
+  .btn-edit:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* LIVE BUDGET ENGINE */
+  .budget-engine {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
 
   .metrics-grid {
     display: grid;
@@ -177,32 +213,15 @@
 
   .metric-label { font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; }
   .metric-val { font-family: 'Space Mono', monospace; font-size: 1.4rem; font-weight: 700; color: var(--text); }
-  .metric-sub { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
 
-  /* ALERTS */
-  .alert-box {
-    padding: 14px 16px;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-family: 'Space Mono', monospace;
-    line-height: 1.5;
-  }
+  /* ALERTS & IMPACT */
+  .alert-box { padding: 14px 16px; border-radius: 8px; font-size: 0.85rem; font-family: 'Space Mono', monospace; line-height: 1.5; }
   .alert-box.deficit { background: rgba(255, 107, 74, 0.1); border: 1px solid var(--orange); color: var(--orange); }
   .alert-box.surplus { background: rgba(74, 255, 180, 0.1); border: 1px solid var(--green); color: var(--green); }
 
-  /* DIAGNOSTICS */
-  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 24px; }
-
-  .impact-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-  }
-
+  .impact-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
   .impact-card.help { border-top: 4px solid var(--green); }
   .impact-card.hinder { border-top: 4px solid var(--orange); }
-
   .impact-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 12px; }
   .impact-list { list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem; }
   .impact-list li { position: relative; padding-left: 18px; }
@@ -223,6 +242,35 @@
     border: 1px solid var(--border);
     color: var(--muted);
   }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    width: 90%;
+    max-width: 420px;
+  }
+
+  .modal-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+  .modal-sub { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--muted); margin-bottom: 16px; }
+  .modal-input-val { font-family: 'Space Mono', monospace; font-size: 1.5rem; font-weight: 700; color: var(--accent); text-align: center; margin-bottom: 16px; }
+  input[type=range] { width: 100%; margin-bottom: 20px; accent-color: var(--accent); }
+  .modal-btns { display: flex; gap: 8px; justify-content: flex-end; }
+  .btn-save { background: var(--accent); color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; cursor: pointer; }
+  .btn-cancel { background: transparent; color: var(--muted); border: 1px solid var(--border); padding: 8px 16px; border-radius: 6px; cursor: pointer; }
 </style>
 </head>
 <body>
@@ -231,321 +279,403 @@
 
   <header>
     <div>
-      <div class="header-tag">// SERVE GOD WIDDIT — WEALTH OS V6.4</div>
-      <h1>God's Money Stewardship Dashboard</h1>
+      <div class="header-tag">// SERVE GOD WIDDIT — WEALTH OS V8</div>
+      <h1>Live Cloud Trajectory & Budget Engine</h1>
     </div>
     <div style="text-align: right;">
-      <span class="status-tag" id="sync-status">Status: Sheet Locked to Gods Money</span>
+      <span class="status-tag" id="sync-status">Status: Initialising Cloud Sync...</span>
     </div>
   </header>
 
-  <div class="sync-card" id="drop-zone">
+  <div class="sync-card">
     <div class="sync-left">
-      <div class="sync-icon">📖</div>
+      <div class="sync-dot" id="sync-indicator"></div>
       <div>
-        <div class="sync-title">Sync Workbook (Serve God Widdit to analyse.xlsx)</div>
-        <div class="sync-sub" id="file-sub-text">Parsing strictly from sheet: <strong>Gods money</strong></div>
+        <div class="sync-title">Connected to Google Sheets Cloud Feed</div>
+        <div class="sync-sub" id="sync-time-sub">Auto-syncing data from <code>God's money</code> sheet</div>
       </div>
     </div>
-    <div class="file-btn-wrapper">
-      <button class="btn-upload">Upload .xlsx / .csv</button>
-      <input type="file" id="excel-input" class="file-input" accept=".xlsx, .xls, .csv" />
-    </div>
+    <button class="btn-action" onclick="fetchLiveCloudData()">⚡ Sync with Cloud Now</button>
   </div>
-
-  <div id="sync-toast" class="sync-toast"></div>
 
   <div class="scripture-card">
     <div class="scripture-quote">"So now let Pharaoh select a man discreet, understanding, and wise... let them gather all the food of those good years that are coming and store up grain..."</div>
     <div class="scripture-ref">// Genesis 41:33–36 AMPC — Biblical Storage Principle</div>
   </div>
 
+  <div class="overall-card">
+    <div class="overall-header">
+      <div>
+        <div class="overall-title">Overall Vision & Trajectory Completion</div>
+        <div style="font-size:0.78rem; color:var(--muted); font-family:'Space Mono';">Weighted across 5 dynamic trajectory pillars (live cloud linked)</div>
+      </div>
+      <div class="overall-pct" id="overall-pct">0%</div>
+    </div>
+    <div class="bar-bg">
+      <div class="bar-fill" id="overall-bar" style="width: 0%;"></div>
+    </div>
+  </div>
+
+  <div class="section-title">Dynamic Vision & Trajectory Targets</div>
+  <div class="grid-2" id="cards-container">
+    </div>
+
   <div class="budget-engine">
-    <div class="engine-header">
-      <div class="engine-title">Monthly Cash Flow Breakdown</div>
-      <span class="status-tag" id="sheet-source-badge">Sheet: Gods money</span>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <div class="section-title" style="margin-bottom:0;">Live Monthly Cash Flow (Google Sheets Source)</div>
+      <span class="status-tag" id="sheet-source-badge">Live CSV Feed</span>
     </div>
 
     <div class="metrics-grid">
       <div class="metric-card">
         <div class="metric-label">Your Take-Home</div>
-        <div class="metric-val">£<span id="disp-income">1,962.00</span></div>
-        <div class="metric-sub">Base Net (+ £<span id="disp-contrib">600.00</span> Partner Contrib)</div>
+        <div class="metric-val">£<span id="disp-income">0.00</span></div>
+        <div style="font-size:0.75rem; color:var(--muted);">Gross £<span id="disp-gross">0</span></div>
       </div>
       <div class="metric-card">
         <div class="metric-label">Blessed Reminder</div>
-        <div class="metric-val" style="color:var(--accent);">£<span id="disp-tithe">196.20</span></div>
-        <div class="metric-sub">10% Tithe Off Your Income</div>
+        <div class="metric-val" style="color:var(--accent);">£<span id="disp-tithe">0.00</span></div>
+        <div style="font-size:0.75rem; color:var(--muted);">10% Covenant Portion</div>
       </div>
       <div class="metric-card">
-        <div class="metric-label">Your Share of Outgoings</div>
-        <div class="metric-val" style="color:var(--orange);">£<span id="disp-bills">1,173.98</span></div>
-        <div class="metric-sub">Share of Bills (£1,140) + DDs (£33.98)</div>
+        <div class="metric-label">Your Outgoing Share</div>
+        <div class="metric-val" style="color:var(--orange);">£<span id="disp-bills">0.00</span></div>
+        <div style="font-size:0.75rem; color:var(--muted);">Bills Share + Fixed DDs</div>
       </div>
       <div class="metric-card">
-        <div class="metric-label">Net Remaining Balance</div>
-        <div class="metric-val" style="color:var(--green);">£<span id="disp-remaining">241.82</span></div>
-        <div class="metric-sub">After Bills, DDs, Tithe & £350 Savings</div>
+        <div class="metric-label">Net Remaining Buffer</div>
+        <div class="metric-val" style="color:var(--green);">£<span id="disp-remaining">0.00</span></div>
+        <div style="font-size:0.75rem; color:var(--muted);">Post-Tithe, Outgoings & Savings</div>
       </div>
     </div>
 
     <div id="gap-alert" class="alert-box surplus">
-      ✓ <strong>Budget Stable & Solvent:</strong> Total outgoings (£1,720.18) leave a solid positive buffer of <strong>£241.82/mo</strong> (13.7% cash buffer).
-    </div>
-  </div>
-
-  <div class="grid-2">
-    <div class="impact-card help">
-      <div class="impact-title" style="color:var(--green)">▲ How God's Money Model HELPS Trajectory</div>
-      <ul class="impact-list">
-        <li><strong>Protected Covenant Order:</strong> Blessed Reminder (£<span id="sync-tithe-txt">196.20</span>) is deducted first, maintaining biblical stewardship priority.</li>
-        <li><strong>Active Sinking & Savings Pots:</strong> Successfully funding £300/mo Travel and £50/mo General Savings as explicit budget line items.</li>
-        <li><strong>Liquid Cash Margin:</strong> Maintaining an uncommitted £<span id="sync-rem-txt">241.82</span> monthly buffer guards against unforeseen family or living shocks.</li>
-      </ul>
-    </div>
-
-    <div class="impact-card hinder">
-      <div class="impact-title" style="color:var(--orange)">▼ How God's Money Model HINDERS Trajectory</div>
-      <ul class="impact-list">
-        <li><strong>Long-Term Compounding Stalled:</strong> Junior ISA (Daniel's pot) and long-term equity ISAs (Trading 212) are currently paused in this specific monthly model.</li>
-        <li><strong>High Housing Share Burden:</strong> John's bill share of £<span id="sync-share-txt">1,140.00</span> accounts for 64.6% of your post-tithe stewardship pool (£1,765.80).</li>
-        <li><strong>Discretionary Squeeze:</strong> Any unbudgeted personal spend or dining out directly diminishes the £241.82 emergency safety buffer.</li>
-      </ul>
+      ✓ <strong>Trajectory Engine Active:</strong> Fetching live data from cloud source.
     </div>
   </div>
 
   <div class="budget-engine">
-    <div class="engine-title" style="margin-bottom:8px;">God's Money Sheet Itemized Structure</div>
+    <div class="section-title">Cloud-Driven Wealth Velocity Projections</div>
+    <div style="color:var(--muted); font-size:0.8rem; font-family:'Space Mono'; margin-bottom:12px;">
+      Simulating active savings (<span id="calc-monthly-sav">£0.00</span>/mo) compounding at 5.0% annual equity growth:
+    </div>
     <table class="table-mini">
       <thead>
         <tr>
-          <th>Category / Line Item</th>
-          <th>Type</th>
-          <th>Sheet Value</th>
-          <th>Allocation Notes</th>
+          <th>Horizon</th>
+          <th>Monthly Inflow</th>
+          <th>Total Contributed</th>
+          <th>Projected Compound Portfolio</th>
+          <th>Milestone Relevance</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><strong>Your Income</strong></td>
-          <td>Income</td>
-          <td>£<span id="row-inc">1,962.00</span></td>
-          <td>Gross £29,802.53 | Net £23,544.00 </td>
+          <td><strong>1 Year</strong></td>
+          <td>£<span class="row-sav-val">0.00</span></td>
+          <td>£<span id="proj-c-1">0</span></td>
+          <td>£<span id="proj-v-1">0</span></td>
+          <td>Emergency Buffer Secured</td>
         </tr>
         <tr>
-          <td><strong>Household Contribution</strong></td>
-          <td>Income Inflow</td>
-          <td>£<span id="row-contrib">600.00</span></td>
-          <td>Household Contributed Inflow </td>
+          <td><strong>5 Years</strong></td>
+          <td>£<span class="row-sav-val">0.00</span></td>
+          <td>£<span id="proj-c-5">0</span></td>
+          <td>£<span id="proj-v-5">0</span></td>
+          <td>First Property Deposit Readiness</td>
         </tr>
         <tr>
-          <td><strong>Blessed Reminder</strong></td>
-          <td>Stewardship</td>
-          <td>£<span id="row-tithe">196.20</span></td>
-          <td>10% Covenant Tithe </td>
+          <td><strong>10 Years</strong></td>
+          <td>£<span class="row-sav-val">0.00</span></td>
+          <td>£<span id="proj-c-10">0</span></td>
+          <td>£<span id="proj-v-10">0</span></td>
+          <td>Multi-Account Foundation & Family Pot</td>
         </tr>
         <tr>
-          <td><strong>Stewardship Portion</strong></td>
-          <td>Available Pool</td>
-          <td>£<span id="row-steward">1,765.80</span></td>
-          <td>Your Net Income Post-Tithe </td>
+          <td><strong>20 Years</strong></td>
+          <td>£<span class="row-sav-val">0.00</span></td>
+          <td>£<span id="proj-c-20">0</span></td>
+          <td>£<span id="proj-v-20">0</span></td>
+          <td>Accelerated Freedom & ISA Independence</td>
         </tr>
         <tr>
-          <td><strong>Direct Debits (Phone, Spotify, Drive, MotionArray)</strong></td>
-          <td>Fixed DDs</td>
-          <td>£<span id="row-dd">33.98</span></td>
-          <td>Digital Subscriptions & Mobile </td>
-        </tr>
-        <tr>
-          <td><strong>Full House Living Bills</strong></td>
-          <td>Living Essentials</td>
-          <td>£<span id="row-bills">1,738.50</span></td>
-          <td>Rent (£1,350), Council Tax (£232), Utilities (£156.50) </td>
-        </tr>
-        <tr>
-          <td><strong>Your Share of Bills</strong></td>
-          <td>John (Share)</td>
-          <td>£<span id="row-share">1,140.00</span></td>
-          <td>Personal Living Expense Share </td>
-        </tr>
-        <tr>
-          <td><strong>Total Outgoings (Share + DDs)</strong></td>
-          <td>Core Outflow</td>
-          <td>£<span id="row-outgoing">1,173.98</span></td>
-          <td>66.5% of Stewardship Portion </td>
-        </tr>
-        <tr>
-          <td><strong>Save — Travel</strong></td>
-          <td>Sinking Fund</td>
-          <td>£<span id="row-travel">300.00</span></td>
-          <td>Designated Travel Pot (17.0%) </td>
-        </tr>
-        <tr>
-          <td><strong>Save — General</strong></td>
-          <td>Savings Pot</td>
-          <td>£<span id="row-save">50.00</span></td>
-          <td>Liquid Emergency Savings (2.8%) </td>
+          <td><strong>40 Years</strong></td>
+          <td>£<span class="row-sav-val">0.00</span></td>
+          <td>£<span id="proj-c-40">0</span></td>
+          <td>£<span id="proj-v-40">0</span></td>
+          <td>Generational Stewardship Milestone</td>
         </tr>
       </tbody>
     </table>
   </div>
 
+  <div class="grid-2">
+    <div class="impact-card help">
+      <div class="impact-title" style="color:var(--green)">▲ How Current Budgeting HELPS Trajectory</div>
+      <ul class="impact-list">
+        <li><strong>Protected Covenant Tithe:</strong> Blessed Reminder (£<span id="sync-tithe-txt">0.00</span>) deducted first, maintaining biblical stewardship priority.</li>
+        <li><strong>Automated Sinking Pots:</strong> Dedicated monthly accumulation building liquid reserves.</li>
+        <li><strong>Liquid Cash Margin:</strong> Maintaining an uncommitted £<span id="sync-rem-txt">0.00</span> buffer guards against surprise expenses.</li>
+      </ul>
+    </div>
+
+    <div class="impact-card hinder">
+      <div class="impact-title" style="color:var(--orange)">▼ How Current Budgeting HINDERS Trajectory</div>
+      <ul class="impact-list">
+        <li><strong>Housing Cost Concentration:</strong> Bills share of £<span id="sync-share-txt">0.00</span> represents the primary allocation from your post-tithe pool.</li>
+        <li><strong>Probation Growth Cap:</strong> Initial salary floor limits savings velocity until Glider probation (£37k) and 8% NEST match activate.</li>
+        <li><strong>Discretionary Leakage:</strong> Any unbudgeted spending reduces the monthly emergency cushion.</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">Edit Trajectory Milestone</div>
+    <div class="modal-sub" id="modal-sub">// Adjust current saved/invested progress</div>
+    <div class="modal-input-val" id="modal-val">£0</div>
+    <input type="range" id="modal-slider" min="0" max="100" value="0"/>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveProgress()">Save Progress</button>
+    </div>
+  </div>
 </div>
 
 <script>
-  // Updated default values matching your exact God's Money spreadsheet data
-  let godsMoneyData = JSON.parse(localStorage.getItem('wos_v6_4_gods_money')) || {
+  // YOUR PUBLIC GOOGLE SHEETS CSV ENDPOINT
+  const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0bEvTEPZvHVvbbCbqVS5ecl3VIlpr4ehy9ZreOW6HnwyUcVf3aPOHiJsgUMMRPQ/pub?gid=856851425&single=true&output=csv";
+
+  let goals = [
+    { key: 'efund', label: 'Emergency Buffer (3-Mo Target)', cur: 1000, max: 3522, unit: '£', color: 'var(--green)' },
+    { key: 'salary', label: 'Gross Salary Trajectory', cur: 29803, max: 50000, unit: '£', color: 'var(--accent)' },
+    { key: 'savings', label: 'Annual Active Savings Rate', cur: 4200, max: 12000, unit: '£', color: 'var(--blue)' },
+    { key: 'property', label: 'Property / Sinking Fund Pot', cur: 1500, max: 30000, unit: '£', color: 'var(--purple)' },
+    { key: 'milestone', label: 'The £1,000,000 Portfolio Goal', cur: 4315, max: 1000000, unit: '£', color: 'var(--orange)' }
+  ];
+
+  let budgetData = JSON.parse(localStorage.getItem('wos_v8_cloud_engine')) || {
     gross: 29802.53,
     net: 23544.00,
     income: 1962.00,
-    contribution: 600.00,
+    contrib: 600.00,
     tithe: 196.20,
     stewardship: 1765.80,
     dd: 33.98,
-    bills: 1738.50,
+    billsFull: 1738.50,
     share: 1140.00,
     totalOutgoing: 1173.98,
     travel: 300.00,
     save: 50.00,
-    outgoingsTotal: 1720.18,
     remaining: 241.82,
-    lastUpdated: 'Updated Baseline (Gods money)'
+    goalsProgress: [1000, 29803, 4200, 1500, 4315],
+    lastUpdated: 'Cached Baseline'
   };
 
-  function updateUI() {
-    const inc = Number(godsMoneyData.income);
-    const contrib = Number(godsMoneyData.contribution);
-    const tithe = Number(godsMoneyData.tithe);
-    const billsShare = Number(godsMoneyData.share);
-    const dd = Number(godsMoneyData.dd);
-    const outgoing = Number(godsMoneyData.totalOutgoing || (billsShare + dd));
-    const travel = Number(godsMoneyData.travel);
-    const save = Number(godsMoneyData.save);
-    
-    // Remaining calculation
-    const totalOut = outgoing + travel + save;
-    const remaining = Number(godsMoneyData.remaining) || (inc - tithe - outgoing - travel - save);
+  let editingIdx = null;
 
-    document.getElementById('disp-income').textContent = inc.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    document.getElementById('disp-contrib').textContent = contrib.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    document.getElementById('disp-tithe').textContent = tithe.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    document.getElementById('disp-bills').textContent = outgoing.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    document.getElementById('disp-remaining').textContent = remaining.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  function calculateFV(pmtMonthly, annualRate, years) {
+    const r = annualRate / 12;
+    const n = years * 12;
+    if (r === 0) return pmtMonthly * n;
+    return pmtMonthly * ((Math.pow(1 + r, n) - 1) / r);
+  }
+
+  function updateCompoundingTable(monthlySav) {
+    document.getElementById('calc-monthly-sav').textContent = '£' + monthlySav.toFixed(2);
+    document.querySelectorAll('.row-sav-val').forEach(el => el.textContent = monthlySav.toFixed(2));
+
+    const horizons = [1, 5, 10, 20, 40];
+    horizons.forEach(yr => {
+      const contributed = monthlySav * yr * 12;
+      const fv = calculateFV(monthlySav, 0.05, yr);
+      document.getElementById(`proj-c-${yr}`).textContent = Math.round(contributed).toLocaleString('en-GB');
+      document.getElementById(`proj-v-${yr}`).textContent = Math.round(fv).toLocaleString('en-GB');
+    });
+  }
+
+  function renderTrajectoryCards() {
+    const container = document.getElementById('cards-container');
+    container.innerHTML = '';
+
+    goals[0].max = Math.max(1000, Math.round(budgetData.totalOutgoing * 3));
+    goals[1].cur = Math.round(budgetData.gross);
+    goals[2].cur = Math.round((budgetData.travel + budgetData.save) * 12);
+
+    goals.forEach((g, i) => {
+      const cur = budgetData.goalsProgress[i] !== undefined ? budgetData.goalsProgress[i] : g.cur;
+      const pct = Math.min(100, Math.round((cur / g.max) * 100));
+
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="card-top">
+          <div class="card-label">${g.label}</div>
+          <button class="btn-edit" onclick="openModal(${i})">Edit Progress</button>
+        </div>
+        <div class="card-val">
+          ${g.unit}${cur.toLocaleString('en-GB')} <span style="font-size:0.75rem; font-weight:400; color:var(--muted);">/ ${g.unit}${g.max.toLocaleString('en-GB')}</span>
+        </div>
+        <div class="overall-header" style="margin-bottom:6px;">
+          <span class="card-sub">Pillar Completion</span>
+          <span style="font-family:'Space Mono'; font-size:0.85rem; font-weight:700; color:${g.color}">${pct}%</span>
+        </div>
+        <div class="bar-bg">
+          <div class="bar-fill" style="width: ${pct}%; background: ${g.color};"></div>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+
+    updateOverall();
+  }
+
+  function updateOverall() {
+    let totalPct = 0;
+    goals.forEach((g, i) => {
+      const cur = budgetData.goalsProgress[i] !== undefined ? budgetData.goalsProgress[i] : g.cur;
+      totalPct += Math.min(1, cur / g.max);
+    });
+    const avg = Math.round((totalPct / goals.length) * 100);
+    document.getElementById('overall-pct').textContent = avg + '%';
+    document.getElementById('overall-bar').style.width = avg + '%';
+  }
+
+  function updateUI() {
+    const inc = Number(budgetData.income);
+    const tithe = Number(budgetData.tithe);
+    const outgoings = Number(budgetData.totalOutgoing);
+    const monthlySav = Number(budgetData.travel + budgetData.save);
+    const remaining = Number(budgetData.remaining);
+
+    document.getElementById('disp-income').textContent = inc.toLocaleString('en-GB', { minimumFractionDigits: 2 });
+    document.getElementById('disp-gross').textContent = Math.round(budgetData.gross).toLocaleString('en-GB');
+    document.getElementById('disp-tithe').textContent = tithe.toLocaleString('en-GB', { minimumFractionDigits: 2 });
+    document.getElementById('disp-bills').textContent = outgoings.toLocaleString('en-GB', { minimumFractionDigits: 2 });
+    document.getElementById('disp-remaining').textContent = remaining.toLocaleString('en-GB', { minimumFractionDigits: 2 });
 
     document.getElementById('sync-tithe-txt').textContent = tithe.toFixed(2);
-    document.getElementById('sync-share-txt').textContent = billsShare.toFixed(2);
+    document.getElementById('sync-share-txt').textContent = Number(budgetData.share).toFixed(2);
     document.getElementById('sync-rem-txt').textContent = remaining.toFixed(2);
-
-    document.getElementById('row-inc').textContent = inc.toFixed(2);
-    document.getElementById('row-contrib').textContent = contrib.toFixed(2);
-    document.getElementById('row-tithe').textContent = tithe.toFixed(2);
-    document.getElementById('row-steward').textContent = Number(godsMoneyData.stewardship).toFixed(2);
-    document.getElementById('row-dd').textContent = dd.toFixed(2);
-    document.getElementById('row-bills').textContent = Number(godsMoneyData.bills).toFixed(2);
-    document.getElementById('row-share').textContent = billsShare.toFixed(2);
-    document.getElementById('row-outgoing').textContent = outgoing.toFixed(2);
-    document.getElementById('row-travel').textContent = travel.toFixed(2);
-    document.getElementById('row-save').textContent = save.toFixed(2);
 
     const alertBox = document.getElementById('gap-alert');
     if (remaining < 0) {
       alertBox.className = 'alert-box deficit';
-      alertBox.innerHTML = `⚠️ <strong>Outgoings Exceed Income:</strong> Monthly deficit of <strong>£${Math.abs(remaining).toFixed(2)}</strong>. Reduce discretionary spend.`;
+      alertBox.innerHTML = `⚠️ <strong>Trajectory Deficit:</strong> Outgoings exceed income by <strong>£${Math.abs(remaining).toFixed(2)}/mo</strong>.`;
     } else {
       alertBox.className = 'alert-box surplus';
-      alertBox.innerHTML = `✓ <strong>Budget Stable & Solvent:</strong> Total outgoings (£${totalOut.toFixed(2)}) leave a solid positive buffer of <strong>£${remaining.toFixed(2)}/mo</strong>.`;
+      alertBox.innerHTML = `✓ <strong>Trajectory Solvent:</strong> Live cloud stream active. Monthly buffer: <strong>£${remaining.toFixed(2)}/mo</strong>.`;
     }
 
-    document.getElementById('sync-status').textContent = `Last Synced: ${godsMoneyData.lastUpdated}`;
+    document.getElementById('sync-status').textContent = `Status: ${budgetData.lastUpdated}`;
+    updateCompoundingTable(monthlySav);
+    renderTrajectoryCards();
   }
 
-  function showToast(msg) {
-    const toast = document.getElementById('sync-toast');
-    toast.style.display = 'block';
-    toast.innerHTML = msg;
-    setTimeout(() => { toast.style.display = 'none'; }, 6000);
-  }
+  // FETCH LIVE DATA DIRECT FROM GOOGLE SHEETS CSV ENDPOINT
+  async function fetchLiveCloudData() {
+    const indicator = document.getElementById('sync-indicator');
+    const statusText = document.getElementById('sync-status');
+    const subText = document.getElementById('sync-time-sub');
 
-  function handleExcelFile(file) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      try {
-        const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
+    indicator.className = 'sync-dot loading';
+    statusText.textContent = 'Status: Fetching Live Google Sheet...';
 
-        // STRICT TARGET: Locate Gods money / God's money tab
-        let targetSheetName = workbook.SheetNames.find(n => {
-          const clean = n.toLowerCase().replace(/['\s_-]/g, '');
-          return clean.includes('godsmoney') || clean.includes('godmoney');
-        });
+    try {
+      // Adding timestamp parameter to bypass browser caching of public Google Sheet CSV
+      const liveUrl = GOOGLE_SHEET_CSV_URL + '&_t=' + new Date().getTime();
+      const response = await fetch(liveUrl);
+      if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
 
-        if (!targetSheetName) {
-          showToast(`⚠️ <strong>Sheet Not Found:</strong> Could not find sheet <em>"Gods money"</em> in ${file.name}.`);
-          return;
-        }
+      const csvText = await response.text();
+      const workbook = XLSX.read(csvText, { type: 'string' });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const grid = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-        const sheet = workbook.Sheets[targetSheetName];
-        const grid = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+      grid.forEach(row => {
+        if (!row) return;
+        for (let c = 0; c < row.length; c++) {
+          const cell = String(row[c] || '').toLowerCase().trim();
+          const val1 = parseFloat(row[c + 1]);
+          const val2 = parseFloat(row[c + 2]);
+          const val = !isNaN(val1) ? val1 : (!isNaN(val2) ? val2 : null);
 
-        // Direct key mapping for the updated spreadsheet schema
-        grid.forEach(row => {
-          if (!row) return;
-          for (let c = 0; c < row.length; c++) {
-            const cell = String(row[c] || '').toLowerCase().trim();
-            const val1 = parseFloat(row[c + 1]);
-            const val2 = parseFloat(row[c + 2]);
-            const val = !isNaN(val1) ? val1 : (!isNaN(val2) ? val2 : null);
-
-            if (val !== null) {
-              if (cell.includes('gross')) godsMoneyData.gross = val;
-              if (cell.includes('net') && !cell.includes('internet')) godsMoneyData.net = val;
-              if (cell.includes('your income')) godsMoneyData.income = val;
-              if (cell.includes('contribution') && !cell.includes('total')) godsMoneyData.contribution = val;
-              if (cell.includes('blessed reminder')) godsMoneyData.tithe = val;
-              if (cell.includes('stewardship portion')) godsMoneyData.stewardship = val;
-              if (cell.includes('john (share)') || cell.includes('share of bills')) godsMoneyData.share = val;
-              if (cell.includes('total outgoing') || cell.includes('dd (santander)')) godsMoneyData.totalOutgoing = val;
-              if (cell === 'travel' || cell.includes('travel')) godsMoneyData.travel = val;
-              if (cell === 'save' || cell.includes('save,')) godsMoneyData.save = val;
-              if (cell.includes('remaining balance')) godsMoneyData.remaining = val;
-            }
+          if (val !== null) {
+            if (cell.includes('gross')) budgetData.gross = val;
+            if (cell.includes('net') && !cell.includes('internet')) budgetData.net = val;
+            if (cell.includes('your income')) budgetData.income = val;
+            if (cell.includes('contribution') && !cell.includes('total')) budgetData.contrib = val;
+            if (cell.includes('blessed reminder')) budgetData.tithe = val;
+            if (cell.includes('stewardship portion')) budgetData.stewardship = val;
+            if (cell.includes('john (share)') || cell.includes('share of bills')) budgetData.share = val;
+            if (cell.includes('total outgoing') || cell.includes('dd (santander)')) budgetData.totalOutgoing = val;
+            if (cell === 'travel' || cell.includes('travel')) budgetData.travel = val;
+            if (cell === 'save' || cell.includes('save,')) budgetData.save = val;
+            if (cell.includes('remaining balance')) budgetData.remaining = val;
           }
-        });
+        }
+      });
 
-        const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        godsMoneyData.lastUpdated = `${timeStr} (${file.name})`;
-        localStorage.setItem('wos_v6_4_gods_money', JSON.stringify(godsMoneyData));
+      budgetData.goalsProgress[1] = Math.round(budgetData.gross);
+      budgetData.goalsProgress[2] = Math.round((budgetData.travel + budgetData.save) * 12);
 
-        document.getElementById('sheet-source-badge').textContent = `Sheet: ${targetSheetName}`;
-        document.getElementById('file-sub-text').textContent = `✓ Successfully read ${file.name} [Sheet: ${targetSheetName}]`;
-        
-        updateUI();
-        showToast(`✓ <strong>Successfully synced with ${file.name}</strong> [Sheet: <em>${targetSheetName}</em>]<br/>Income: £${godsMoneyData.income.toFixed(2)} | Tithe: £${godsMoneyData.tithe.toFixed(2)} | Outgoing Share: £${godsMoneyData.totalOutgoing.toFixed(2)} | Buffer: £${godsMoneyData.remaining.toFixed(2)}`);
-      } catch (err) {
-        console.error(err);
-        showToast(`⚠️ <strong>Sync Warning:</strong> Could not parse Gods money tab. Error: ${err.message}`);
-      }
-    };
-    reader.readAsArrayBuffer(file);
+      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      budgetData.lastUpdated = `Synced with Google Sheets @ ${timeStr}`;
+      localStorage.setItem('wos_v8_cloud_engine', JSON.stringify(budgetData));
+
+      indicator.className = 'sync-dot';
+      subText.textContent = `✓ Auto-synced live from Google Sheets at ${timeStr}`;
+      updateUI();
+    } catch (err) {
+      console.error('Cloud Sync Error:', err);
+      indicator.className = 'sync-dot error';
+      statusText.textContent = 'Status: Cloud Sync Failed (Using Local Storage)';
+      subText.textContent = `⚠️ Error fetching cloud feed: ${err.message}`;
+      updateUI();
+    }
   }
 
-  const fileInput = document.getElementById('excel-input');
-  fileInput.addEventListener('change', (e) => {
-    if (e.target.files.length > 0) handleExcelFile(e.target.files[0]);
-  });
+  function openModal(idx) {
+    editingIdx = idx;
+    const g = goals[idx];
+    const cur = budgetData.goalsProgress[idx] !== undefined ? budgetData.goalsProgress[idx] : g.cur;
+    
+    document.getElementById('modal-title').textContent = g.label;
+    document.getElementById('modal-sub').textContent = `// Set current progress in ${g.unit}`;
+    
+    const slider = document.getElementById('modal-slider');
+    slider.max = g.max;
+    slider.step = Math.max(1, Math.floor(g.max / 200));
+    slider.value = cur;
+    
+    updateModalDisplay();
+    document.getElementById('modal-overlay').classList.add('open');
+  }
 
-  const dropZone = document.getElementById('drop-zone');
-  ['dragenter', 'dragover'].forEach(name => {
-    dropZone.addEventListener(name, (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
-  });
-  ['dragleave', 'drop'].forEach(name => {
-    dropZone.addEventListener(name, (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); });
-  });
-  dropZone.addEventListener('drop', (e) => {
-    if (e.dataTransfer.files.length > 0) handleExcelFile(e.dataTransfer.files[0]);
-  });
+  function updateModalDisplay() {
+    const val = +document.getElementById('modal-slider').value;
+    document.getElementById('modal-val').textContent = '£' + val.toLocaleString('en-GB');
+  }
 
-  updateUI();
+  document.getElementById('modal-slider').addEventListener('input', updateModalDisplay);
+
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+  }
+
+  function saveProgress() {
+    if (editingIdx !== null) {
+      budgetData.goalsProgress[editingIdx] = +document.getElementById('modal-slider').value;
+      localStorage.setItem('wos_v8_cloud_engine', JSON.stringify(budgetData));
+      renderTrajectoryCards();
+      closeModal();
+    }
+  }
+
+  // Fetch live cloud data immediately on startup
+  fetchLiveCloudData();
 </script>
 </body>
 </html>
