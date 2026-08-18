@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Wealth Operating System v6.2 — Live Spreadsheet Engine</title>
+<title>Wealth Operating System v6.3 — God's Money Dedicated Engine</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
@@ -130,7 +130,18 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* BUDGET ENGINE */
+  /* SCRIPTURE */
+  .scripture-card {
+    background: var(--surface);
+    border-left: 3px solid var(--accent);
+    padding: 14px 18px;
+    border-radius: 4px;
+    margin-bottom: 24px;
+  }
+  .scripture-quote { font-family: 'Space Mono', monospace; font-size: 0.8rem; color: var(--text); font-style: italic; }
+  .scripture-ref { font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--accent); margin-top: 4px; }
+
+  /* CASH FLOW ENGINE */
   .budget-engine {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -220,20 +231,20 @@
 
   <header>
     <div>
-      <div class="header-tag">// SERVE GOD WIDDIT — WEALTH OS V6.2</div>
-      <h1>Budget-Anchored Wealth System</h1>
+      <div class="header-tag">// SERVE GOD WIDDIT — WEALTH OS V6.3</div>
+      <h1>God's Money Stewardship Dashboard</h1>
     </div>
     <div style="text-align: right;">
-      <span class="status-tag" id="sync-status">Status: Stored Baseline</span>
+      <span class="status-tag" id="sync-status">Status: Sheet Locked to Gods Money</span>
     </div>
   </header>
 
   <div class="sync-card" id="drop-zone">
     <div class="sync-left">
-      <div class="sync-icon">📁</div>
+      <div class="sync-icon">📖</div>
       <div>
         <div class="sync-title">Sync Workbook (Serve_God_Widdit_to_analyse.xlsx)</div>
-        <div class="sync-sub" id="file-sub-text">Click or drag & drop your Excel workbook here to recalculate live</div>
+        <div class="sync-sub" id="file-sub-text">Parsing strictly from sheet: <strong>Gods money</strong></div>
       </div>
     </div>
     <div class="file-btn-wrapper">
@@ -244,100 +255,124 @@
 
   <div id="sync-toast" class="sync-toast"></div>
 
+  <div class="scripture-card">
+    <div class="scripture-quote">"So now let Pharaoh select a man discreet, understanding, and wise... let them gather all the food of those good years that are coming and store up grain..."</div>
+    <div class="scripture-ref">// Genesis 41:33–36 AMPC — Biblical Storage Principle</div>
+  </div>
+
   <div class="budget-engine">
     <div class="engine-header">
-      <div class="engine-title">Live Monthly Cash Flow & Allocations</div>
-      <span class="status-tag" id="sheet-source-badge">Sheet: Rigid Budget Projections</span>
+      <div class="engine-title">Monthly Cash Flow Breakdown</div>
+      <span class="status-tag" id="sheet-source-badge">Sheet: Gods money</span>
     </div>
 
     <div class="metrics-grid">
       <div class="metric-card">
-        <div class="metric-label">Joint Net Income</div>
-        <div class="metric-val">£<span id="disp-income">4,530</span></div>
-        <div class="metric-sub">Monthly Take-Home</div>
+        <div class="metric-label">Monthly Income</div>
+        <div class="metric-val">£<span id="disp-income">2,185</span></div>
+        <div class="metric-sub">Net Monthly Baseline</div>
       </div>
       <div class="metric-card">
-        <div class="metric-label">Blessed Reminder (10%)</div>
-        <div class="metric-val" style="color:var(--accent);">£<span id="disp-tithe">453</span></div>
-        <div class="metric-sub">Tithe / Stewardship</div>
+        <div class="metric-label">Blessed Reminder</div>
+        <div class="metric-val" style="color:var(--accent);">£<span id="disp-tithe">218.50</span></div>
+        <div class="metric-sub">10% Tithe / Giving First</div>
       </div>
       <div class="metric-card">
-        <div class="metric-label">Essential Bills</div>
-        <div class="metric-val" style="color:var(--orange);">£<span id="disp-bills">1,843</span></div>
-        <div class="metric-sub">Rent, Utilities, Council Tax</div>
+        <div class="metric-label">Total Santander Outgoings</div>
+        <div class="metric-val" style="color:var(--orange);">£<span id="disp-bills">1,767.93</span></div>
+        <div class="metric-sub">Bills (£1,734) + DDs (£33.93)</div>
       </div>
       <div class="metric-card">
-        <div class="metric-label">Target Savings Pots</div>
-        <div class="metric-val" style="color:var(--green);">£<span id="disp-savings">906</span></div>
-        <div class="metric-sub">T212, NS&I, Tandem, J-ISA</div>
+        <div class="metric-label">Remaining Balance</div>
+        <div class="metric-val" style="color:var(--green);">£<span id="disp-remaining">198.57</span></div>
+        <div class="metric-sub">Post-Tithe & Santander Outgoings</div>
       </div>
     </div>
 
-    <div id="gap-alert" class="alert-box deficit">
-      ⚠️ <strong>Budget Gap Identified:</strong> Target monthly investments exceed post-essential uncommitted cash by <span id="gap-amount">£127.99</span>/mo.
+    <div id="gap-alert" class="alert-box surplus">
+      ✓ <strong>Sheet Balanced:</strong> Stewardship Portion (£1,966.50) covers Santander outgoings with £198.57 remaining for designated savings.
     </div>
   </div>
 
   <div class="grid-2">
     <div class="impact-card help">
-      <div class="impact-title" style="color:var(--green)">▲ How Current Budgeting HELPS Trajectory</div>
+      <div class="impact-title" style="color:var(--green)">▲ How God's Money Model HELPS Trajectory</div>
       <ul class="impact-list">
-        <li><strong>Aggressive Accumulation Rate:</strong> Contributing £<span class="sync-sav-txt">906</span>/mo creates a 20% joint savings velocity that models ~£1.07M by Year 40.</li>
-        <li><strong>Strict Fixed Overhead:</strong> Locking essential bills at £<span class="sync-bills-txt">1,843</span> caps your 3-month safety buffer target firmly at £<span id="disp-efund">5,529</span>.</li>
-        <li><strong>Dedicated Family Provision:</strong> Consistent allocation to Daniel's HL Junior ISA provides compounding independent of personal accounts.</li>
+        <li><strong>Blessed Reminder Precedence:</strong> Tithe is protected as the first priority line item (£<span id="sync-tithe-txt">218.50</span>) before outgoings are calculated.</li>
+        <li><strong>Unified Santander Direct Debit:</strong> Consolidating core living bills into a single £<span id="sync-bills-txt">1,767.93</span> bucket eliminates multi-account leakage.</li>
+        <li><strong>Clean Stewardship Baseline:</strong> Establishes a transparent £<span id="sync-steward-txt">1,966.50</span> net pool from which disciplined savings pots can grow.</li>
       </ul>
     </div>
 
     <div class="impact-card hinder">
-      <div class="impact-title" style="color:var(--orange)">▼ How Current Budgeting HINDERS Trajectory</div>
+      <div class="impact-title" style="color:var(--orange)">▼ How God's Money Model HINDERS Trajectory</div>
       <ul class="impact-list">
-        <li><strong>Discretionary Deficit Risk:</strong> The <span id="gap-txt-2">£127.99</span> gap between target savings and uncommitted cash leaves zero margin for avoidable dining-out expenses.</li>
-        <li><strong>Pre-Probation Salary Floor:</strong> £35k baseline delays full NEST 8% employee match until probation sign-off (~Oct 2026).</li>
-        <li><strong>Cash Leakage Vulnerability:</strong> Weekly money check-ins show personal spending is the primary pressure point diluting monthly ISA deposits.</li>
+        <li><strong>Tight Unallocated Margin:</strong> Post-outgoing buffer of £<span id="sync-rem-txt">198.57</span> leaves minimal headroom if unbudgeted lifestyle/food spend occurs.</li>
+        <li><strong>Inactive Savings Rows:</strong> Sheet records "Baby Pot Junior ISA" and "Save and travel" at £0, meaning long-term compounding is currently stalled in this model.</li>
+        <li><strong>Single Income Dependency:</strong> Relies primarily on the £2,185 baseline until post-probation Glider increases take effect.</li>
       </ul>
     </div>
   </div>
 
   <div class="budget-engine">
-    <div class="engine-title" style="margin-bottom:8px;">Portfolio Allocation from Sheet</div>
+    <div class="engine-title" style="margin-bottom:8px;">God's Money Sheet Line Items</div>
     <table class="table-mini">
       <thead>
         <tr>
-          <th>Pot Name</th>
-          <th>Account / Provider</th>
-          <th>Monthly Input</th>
-          <th>Assumed Growth</th>
-          <th>Projected Outcome (40-Yr)</th>
+          <th>Category / Item</th>
+          <th>Type</th>
+          <th>Sheet Value</th>
+          <th>Status / Purpose</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><strong>Trading 212 ISA</strong></td>
-          <td>Stocks & Shares ISA</td>
-          <td>£<span id="pot-t212">543.60</span></td>
-          <td>5.0%</td>
-          <td>~£801,000</td>
+          <td><strong>Your Income</strong></td>
+          <td>Income</td>
+          <td>£<span id="row-inc">2,185.00</span></td>
+          <td>Active Take-Home</td>
         </tr>
         <tr>
-          <td><strong>NS&I Premium Bonds</strong></td>
-          <td>Emergency Buffer</td>
-          <td>£<span id="pot-nsi">181.20</span></td>
-          <td>3.0%</td>
-          <td>~£167,800</td>
+          <td><strong>Blessed Reminder</strong></td>
+          <td>Stewardship</td>
+          <td>£<span id="row-tithe">218.50</span></td>
+          <td>10% Covenant Portion</td>
         </tr>
         <tr>
-          <td><strong>Tandem Cash Savings</strong></td>
-          <td>High-Interest Pot</td>
-          <td>£<span id="pot-tandem">181.20</span></td>
-          <td>3.4%</td>
-          <td>~£182,300</td>
+          <td><strong>Stewardship Portion</strong></td>
+          <td>Calculated Baseline</td>
+          <td>£<span id="row-steward">1,966.50</span></td>
+          <td>Post-Tithe Available</td>
         </tr>
         <tr>
-          <td><strong>Daniel's Future Fund</strong></td>
-          <td>HL Junior ISA</td>
-          <td>£<span id="pot-jisa">25.00</span></td>
-          <td>5.0%</td>
-          <td>~£36,800</td>
+          <td><strong>Total DD (Spotify, Drive, MotionArray, Phone)</strong></td>
+          <td>Direct Debits</td>
+          <td>£<span id="row-dd">33.93</span></td>
+          <td>Fixed Subscriptions</td>
+        </tr>
+        <tr>
+          <td><strong>Rent & Utility Bills</strong></td>
+          <td>Living Essentials</td>
+          <td>£<span id="row-bills">1,734.00</span></td>
+          <td>Rent, Council Tax, Energy, Water, Net</td>
+        </tr>
+        <tr>
+          <td><strong>DD (Santander Total)</strong></td>
+          <td>Combined Outflow</td>
+          <td>£<span id="row-santander">1,767.93</span></td>
+          <td>Total Essential Direct Debits</td>
+        </tr>
+        <tr>
+          <td><strong>Baby Pot Junior ISA</strong></td>
+          <td>Savings Pot</td>
+          <td>£<span id="row-jisa">0.00</span></td>
+          <td>Daniel's Future Provision</td>
+        </tr>
+        <tr>
+          <td><strong>Save and Travel</strong></td>
+          <td>Flexible Pot</td>
+          <td>£<span id="row-travel">0.00</span></td>
+          <td>Family Sinking Fund</td>
         </tr>
       </tbody>
     </table>
@@ -346,49 +381,53 @@
 </div>
 
 <script>
-  let budgetData = JSON.parse(localStorage.getItem('wos_v6_2_data')) || {
-    income: 4530,
-    tithe: 453,
-    bills: 1842.99,
-    savings: 906,
-    pots: { t212: 543.60, nsi: 181.20, tandem: 181.20, jisa: 25.00 },
-    lastUpdated: 'Baseline Default'
+  let godsMoneyData = JSON.parse(localStorage.getItem('wos_v6_3_gods_money')) || {
+    income: 2185.00,
+    tithe: 218.50,
+    stewardship: 1966.50,
+    dd: 33.93,
+    bills: 1734.00,
+    totalSantander: 1767.93,
+    babyPot: 0.00,
+    saveTravel: 0.00,
+    lastUpdated: 'Baseline (Gods money)'
   };
 
   function updateUI() {
-    const inc = budgetData.income;
-    const tithe = budgetData.tithe || (inc * 0.10);
-    const bills = budgetData.bills;
-    const savings = budgetData.savings;
-    const uncommitted = inc - tithe - bills;
-    const gap = savings - uncommitted;
+    const inc = Number(godsMoneyData.income);
+    const tithe = Number(godsMoneyData.tithe);
+    const santander = Number(godsMoneyData.totalSantander);
+    const remaining = inc - tithe - santander;
 
-    document.getElementById('disp-income').textContent = Math.round(inc).toLocaleString('en-GB');
-    document.getElementById('disp-tithe').textContent = Math.round(tithe).toLocaleString('en-GB');
-    document.getElementById('disp-bills').textContent = Math.round(bills).toLocaleString('en-GB');
-    document.getElementById('disp-savings').textContent = Math.round(savings).toLocaleString('en-GB');
-    document.getElementById('disp-efund').textContent = Math.round(bills * 3).toLocaleString('en-GB');
+    document.getElementById('disp-income').textContent = inc.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    document.getElementById('disp-tithe').textContent = tithe.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    document.getElementById('disp-bills').textContent = santander.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    document.getElementById('disp-remaining').textContent = remaining.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-    document.querySelectorAll('.sync-sav-txt').forEach(el => el.textContent = Math.round(savings).toLocaleString('en-GB'));
-    document.querySelectorAll('.sync-bills-txt').forEach(el => el.textContent = Math.round(bills).toLocaleString('en-GB'));
+    document.getElementById('sync-tithe-txt').textContent = tithe.toFixed(2);
+    document.getElementById('sync-bills-txt').textContent = santander.toFixed(2);
+    document.getElementById('sync-steward-txt').textContent = Number(godsMoneyData.stewardship).toFixed(2);
+    document.getElementById('sync-rem-txt').textContent = remaining.toFixed(2);
 
-    document.getElementById('pot-t212').textContent = Number(budgetData.pots.t212).toFixed(2);
-    document.getElementById('pot-nsi').textContent = Number(budgetData.pots.nsi).toFixed(2);
-    document.getElementById('pot-tandem').textContent = Number(budgetData.pots.tandem).toFixed(2);
-    document.getElementById('pot-jisa').textContent = Number(budgetData.pots.jisa).toFixed(2);
+    document.getElementById('row-inc').textContent = inc.toFixed(2);
+    document.getElementById('row-tithe').textContent = tithe.toFixed(2);
+    document.getElementById('row-steward').textContent = Number(godsMoneyData.stewardship).toFixed(2);
+    document.getElementById('row-dd').textContent = Number(godsMoneyData.dd).toFixed(2);
+    document.getElementById('row-bills').textContent = Number(godsMoneyData.bills).toFixed(2);
+    document.getElementById('row-santander').textContent = santander.toFixed(2);
+    document.getElementById('row-jisa').textContent = Number(godsMoneyData.babyPot).toFixed(2);
+    document.getElementById('row-travel').textContent = Number(godsMoneyData.saveTravel).toFixed(2);
 
     const alertBox = document.getElementById('gap-alert');
-    if (gap > 0) {
+    if (remaining < 0) {
       alertBox.className = 'alert-box deficit';
-      alertBox.innerHTML = `⚠️ <strong>Budget Gap Identified:</strong> Target monthly investments exceed post-essential uncommitted cash (£${Math.round(uncommitted).toLocaleString('en-GB')}) by <strong>£${gap.toFixed(2)}/mo</strong>. Discretionary spending directly reduces your ISA allocation.`;
-      document.getElementById('gap-txt-2').textContent = '£' + gap.toFixed(2);
+      alertBox.innerHTML = `⚠️ <strong>Outgoings Exceed Income:</strong> Monthly deficit of <strong>£${Math.abs(remaining).toFixed(2)}</strong>. Review Santander direct debits.`;
     } else {
       alertBox.className = 'alert-box surplus';
-      alertBox.innerHTML = `✓ <strong>Budget Fully Funded:</strong> Uncommitted cash surplus of <strong>£${Math.abs(gap).toFixed(2)}/mo</strong> is available after fully funding all target investment pots.`;
-      document.getElementById('gap-txt-2').textContent = '£0.00';
+      alertBox.innerHTML = `✓ <strong>Sheet Balanced:</strong> Post-outgoing buffer of <strong>£${remaining.toFixed(2)}/mo</strong> is available for designated savings pots.`;
     }
 
-    document.getElementById('sync-status').textContent = `Last Synced: ${budgetData.lastUpdated}`;
+    document.getElementById('sync-status').textContent = `Last Synced: ${godsMoneyData.lastUpdated}`;
   }
 
   function showToast(msg) {
@@ -398,31 +437,6 @@
     setTimeout(() => { toast.style.display = 'none'; }, 6000);
   }
 
-  // Multi-Column Smart Value Finder
-  function findNumberNearLabel(grid, searchTerms) {
-    for (let r = 0; r < grid.length; r++) {
-      const row = grid[r];
-      if (!row) continue;
-      for (let c = 0; c < row.length; c++) {
-        const cell = String(row[c] || '').toLowerCase().trim();
-        for (let term of searchTerms) {
-          if (cell.includes(term.toLowerCase())) {
-            // Check adjacent cells to the right and below for a number
-            for (let offset = 1; offset <= 4; offset++) {
-              const rightVal = parseFloat(row[c + offset]);
-              if (!isNaN(rightVal) && rightVal > 0) return rightVal;
-            }
-            if (grid[r + 1]) {
-              const downVal = parseFloat(grid[r + 1][c]);
-              if (!isNaN(downVal) && downVal > 0) return downVal;
-            }
-          }
-        }
-      }
-    }
-    return null;
-  }
-
   function handleExcelFile(file) {
     const reader = new FileReader();
     reader.onload = function(e) {
@@ -430,48 +444,54 @@
         const data = new Uint8Array(e.target.result);
         const workbook = XLSX.read(data, { type: 'array' });
 
-        let matchedSheet = workbook.SheetNames.find(n => 
-          n.toLowerCase().includes('rigid') || 
-          n.toLowerCase().includes('base') || 
-          n.toLowerCase().includes('god') ||
-          n.toLowerCase().includes('maternity')
-        ) || workbook.SheetNames[0];
+        // STRICT TARGET: Only look for God's money / Gods money
+        let targetSheetName = workbook.SheetNames.find(n => {
+          const clean = n.toLowerCase().replace(/['\s_-]/g, '');
+          return clean.includes('godsmoney') || clean.includes('godmoney');
+        });
 
-        const sheet = workbook.Sheets[matchedSheet];
+        if (!targetSheetName) {
+          showToast(`⚠️ <strong>Sheet Not Found:</strong> Could not find sheet <em>"Gods money"</em> in ${file.name}. Please ensure the tab name is intact.`);
+          return;
+        }
+
+        const sheet = workbook.Sheets[targetSheetName];
         const grid = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-        const parsedIncome = findNumberNearLabel(grid, ['monthly joint income', 'joint income', 'net']);
-        const parsedTithe = findNumberNearLabel(grid, ['blessed reminder', 'tithe']);
-        const parsedBills = findNumberNearLabel(grid, ['one month emergency', 'total outgoings', 'total bills', '1842.99']);
-        const parsedSavings = findNumberNearLabel(grid, ['total monthly contributions', 'joint savings', '906']);
+        // Parse exact labels from Gods money structure
+        grid.forEach(row => {
+          if (!row) return;
+          for (let c = 0; c < row.length; c++) {
+            const cell = String(row[c] || '').toLowerCase().trim();
+            const nextVal = parseFloat(row[c + 1]);
+            const nextVal2 = parseFloat(row[c + 2]);
+            const val = !isNaN(nextVal) ? nextVal : (!isNaN(nextVal2) ? nextVal2 : null);
 
-        const parsedT212 = findNumberNearLabel(grid, ['trading 212', 'investing']);
-        const parsedNSI = findNumberNearLabel(grid, ['ns&i', 'premium bonds']);
-        const parsedTandem = findNumberNearLabel(grid, ['tandem', 'savings']);
-        const parsedJISA = findNumberNearLabel(grid, ['junior isa', 'daniel']);
-
-        if (parsedIncome) budgetData.income = parsedIncome;
-        if (parsedTithe) budgetData.tithe = parsedTithe;
-        if (parsedBills) budgetData.bills = parsedBills;
-        if (parsedSavings) budgetData.savings = parsedSavings;
-
-        if (parsedT212) budgetData.pots.t212 = parsedT212;
-        if (parsedNSI) budgetData.pots.nsi = parsedNSI;
-        if (parsedTandem) budgetData.pots.tandem = parsedTandem;
-        if (parsedJISA) budgetData.pots.jisa = parsedJISA;
+            if (val !== null) {
+              if (cell.includes('your income') || cell === 'income') godsMoneyData.income = val;
+              if (cell.includes('blessed reminder')) godsMoneyData.tithe = val;
+              if (cell.includes('stewardship portion')) godsMoneyData.stewardship = val;
+              if (cell.includes('total') && (row[c-1] === 'DD' || cell.includes('dd'))) godsMoneyData.dd = val;
+              if (cell.includes('total') && cell.includes('bills')) godsMoneyData.bills = val;
+              if (cell.includes('dd (santander)') || cell.includes('total outgoing')) godsMoneyData.totalSantander = val;
+              if (cell.includes('baby pot')) godsMoneyData.babyPot = val;
+              if (cell.includes('save and travel')) godsMoneyData.saveTravel = val;
+            }
+          }
+        });
 
         const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        budgetData.lastUpdated = `${timeStr} (${file.name})`;
-        localStorage.setItem('wos_v6_2_data', JSON.stringify(budgetData));
+        godsMoneyData.lastUpdated = `${timeStr} (${file.name})`;
+        localStorage.setItem('wos_v6_3_gods_money', JSON.stringify(godsMoneyData));
 
-        document.getElementById('sheet-source-badge').textContent = `Source Sheet: ${matchedSheet}`;
-        document.getElementById('file-sub-text').textContent = `✓ Successfully read ${file.name} at ${timeStr}`;
+        document.getElementById('sheet-source-badge').textContent = `Sheet: ${targetSheetName}`;
+        document.getElementById('file-sub-text').textContent = `✓ Successfully read ${file.name} [Sheet: ${targetSheetName}]`;
         
         updateUI();
-        showToast(`✓ <strong>Successfully synced with ${file.name}</strong> [Sheet: <em>${matchedSheet}</em>]<br/>Extracted Income: £${budgetData.income.toLocaleString()} | Bills: £${Math.round(budgetData.bills).toLocaleString()} | Savings: £${Math.round(budgetData.savings).toLocaleString()}`);
+        showToast(`✓ <strong>Successfully synced with ${file.name}</strong> [Sheet: <em>${targetSheetName}</em>]<br/>Income: £${godsMoneyData.income.toFixed(2)} | Tithe: £${godsMoneyData.tithe.toFixed(2)} | Santander Outgoings: £${godsMoneyData.totalSantander.toFixed(2)}`);
       } catch (err) {
         console.error(err);
-        showToast(`⚠️ <strong>Sync Warning:</strong> Could not parse file layout. Error: ${err.message}`);
+        showToast(`⚠️ <strong>Sync Warning:</strong> Could not parse Gods money tab. Error: ${err.message}`);
       }
     };
     reader.readAsArrayBuffer(file);
