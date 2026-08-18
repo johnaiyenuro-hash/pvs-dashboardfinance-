@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Wealth Operating System v6.3 — God's Money Dedicated Engine</title>
+<title>Wealth Operating System v6.4 — God's Money Live Engine</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
@@ -231,7 +231,7 @@
 
   <header>
     <div>
-      <div class="header-tag">// SERVE GOD WIDDIT — WEALTH OS V6.3</div>
+      <div class="header-tag">// SERVE GOD WIDDIT — WEALTH OS V6.4</div>
       <h1>God's Money Stewardship Dashboard</h1>
     </div>
     <div style="text-align: right;">
@@ -243,12 +243,12 @@
     <div class="sync-left">
       <div class="sync-icon">📖</div>
       <div>
-        <div class="sync-title">Sync Workbook (Serve_God_Widdit_to_analyse.xlsx)</div>
+        <div class="sync-title">Sync Workbook (Serve God Widdit to analyse.xlsx)</div>
         <div class="sync-sub" id="file-sub-text">Parsing strictly from sheet: <strong>Gods money</strong></div>
       </div>
     </div>
     <div class="file-btn-wrapper">
-      <button class="btn-upload">Upload .xlsx</button>
+      <button class="btn-upload">Upload .xlsx / .csv</button>
       <input type="file" id="excel-input" class="file-input" accept=".xlsx, .xls, .csv" />
     </div>
   </div>
@@ -268,29 +268,29 @@
 
     <div class="metrics-grid">
       <div class="metric-card">
-        <div class="metric-label">Monthly Income</div>
-        <div class="metric-val">£<span id="disp-income">2,185</span></div>
-        <div class="metric-sub">Net Monthly Baseline</div>
+        <div class="metric-label">Your Take-Home</div>
+        <div class="metric-val">£<span id="disp-income">1,962.00</span></div>
+        <div class="metric-sub">Base Net (+ £<span id="disp-contrib">600.00</span> Partner Contrib)</div>
       </div>
       <div class="metric-card">
         <div class="metric-label">Blessed Reminder</div>
-        <div class="metric-val" style="color:var(--accent);">£<span id="disp-tithe">218.50</span></div>
-        <div class="metric-sub">10% Tithe / Giving First</div>
+        <div class="metric-val" style="color:var(--accent);">£<span id="disp-tithe">196.20</span></div>
+        <div class="metric-sub">10% Tithe Off Your Income</div>
       </div>
       <div class="metric-card">
-        <div class="metric-label">Total Santander Outgoings</div>
-        <div class="metric-val" style="color:var(--orange);">£<span id="disp-bills">1,767.93</span></div>
-        <div class="metric-sub">Bills (£1,734) + DDs (£33.93)</div>
+        <div class="metric-label">Your Share of Outgoings</div>
+        <div class="metric-val" style="color:var(--orange);">£<span id="disp-bills">1,173.98</span></div>
+        <div class="metric-sub">Share of Bills (£1,140) + DDs (£33.98)</div>
       </div>
       <div class="metric-card">
-        <div class="metric-label">Remaining Balance</div>
-        <div class="metric-val" style="color:var(--green);">£<span id="disp-remaining">198.57</span></div>
-        <div class="metric-sub">Post-Tithe & Santander Outgoings</div>
+        <div class="metric-label">Net Remaining Balance</div>
+        <div class="metric-val" style="color:var(--green);">£<span id="disp-remaining">241.82</span></div>
+        <div class="metric-sub">After Bills, DDs, Tithe & £350 Savings</div>
       </div>
     </div>
 
     <div id="gap-alert" class="alert-box surplus">
-      ✓ <strong>Sheet Balanced:</strong> Stewardship Portion (£1,966.50) covers Santander outgoings with £198.57 remaining for designated savings.
+      ✓ <strong>Budget Stable & Solvent:</strong> Total outgoings (£1,720.18) leave a solid positive buffer of <strong>£241.82/mo</strong> (13.7% cash buffer).
     </div>
   </div>
 
@@ -298,81 +298,93 @@
     <div class="impact-card help">
       <div class="impact-title" style="color:var(--green)">▲ How God's Money Model HELPS Trajectory</div>
       <ul class="impact-list">
-        <li><strong>Blessed Reminder Precedence:</strong> Tithe is protected as the first priority line item (£<span id="sync-tithe-txt">218.50</span>) before outgoings are calculated.</li>
-        <li><strong>Unified Santander Direct Debit:</strong> Consolidating core living bills into a single £<span id="sync-bills-txt">1,767.93</span> bucket eliminates multi-account leakage.</li>
-        <li><strong>Clean Stewardship Baseline:</strong> Establishes a transparent £<span id="sync-steward-txt">1,966.50</span> net pool from which disciplined savings pots can grow.</li>
+        <li><strong>Protected Covenant Order:</strong> Blessed Reminder (£<span id="sync-tithe-txt">196.20</span>) is deducted first, maintaining biblical stewardship priority.</li>
+        <li><strong>Active Sinking & Savings Pots:</strong> Successfully funding £300/mo Travel and £50/mo General Savings as explicit budget line items.</li>
+        <li><strong>Liquid Cash Margin:</strong> Maintaining an uncommitted £<span id="sync-rem-txt">241.82</span> monthly buffer guards against unforeseen family or living shocks.</li>
       </ul>
     </div>
 
     <div class="impact-card hinder">
       <div class="impact-title" style="color:var(--orange)">▼ How God's Money Model HINDERS Trajectory</div>
       <ul class="impact-list">
-        <li><strong>Tight Unallocated Margin:</strong> Post-outgoing buffer of £<span id="sync-rem-txt">198.57</span> leaves minimal headroom if unbudgeted lifestyle/food spend occurs.</li>
-        <li><strong>Inactive Savings Rows:</strong> Sheet records "Baby Pot Junior ISA" and "Save and travel" at £0, meaning long-term compounding is currently stalled in this model.</li>
-        <li><strong>Single Income Dependency:</strong> Relies primarily on the £2,185 baseline until post-probation Glider increases take effect.</li>
+        <li><strong>Long-Term Compounding Stalled:</strong> Junior ISA (Daniel's pot) and long-term equity ISAs (Trading 212) are currently paused in this specific monthly model.</li>
+        <li><strong>High Housing Share Burden:</strong> John's bill share of £<span id="sync-share-txt">1,140.00</span> accounts for 64.6% of your post-tithe stewardship pool (£1,765.80).</li>
+        <li><strong>Discretionary Squeeze:</strong> Any unbudgeted personal spend or dining out directly diminishes the £241.82 emergency safety buffer.</li>
       </ul>
     </div>
   </div>
 
   <div class="budget-engine">
-    <div class="engine-title" style="margin-bottom:8px;">God's Money Sheet Line Items</div>
+    <div class="engine-title" style="margin-bottom:8px;">God's Money Sheet Itemized Structure</div>
     <table class="table-mini">
       <thead>
         <tr>
-          <th>Category / Item</th>
+          <th>Category / Line Item</th>
           <th>Type</th>
           <th>Sheet Value</th>
-          <th>Status / Purpose</th>
+          <th>Allocation Notes</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td><strong>Your Income</strong></td>
           <td>Income</td>
-          <td>£<span id="row-inc">2,185.00</span></td>
-          <td>Active Take-Home</td>
+          <td>£<span id="row-inc">1,962.00</span></td>
+          <td>Gross £29,802.53 | Net £23,544.00 </td>
+        </tr>
+        <tr>
+          <td><strong>Household Contribution</strong></td>
+          <td>Income Inflow</td>
+          <td>£<span id="row-contrib">600.00</span></td>
+          <td>Household Contributed Inflow </td>
         </tr>
         <tr>
           <td><strong>Blessed Reminder</strong></td>
           <td>Stewardship</td>
-          <td>£<span id="row-tithe">218.50</span></td>
-          <td>10% Covenant Portion</td>
+          <td>£<span id="row-tithe">196.20</span></td>
+          <td>10% Covenant Tithe </td>
         </tr>
         <tr>
           <td><strong>Stewardship Portion</strong></td>
-          <td>Calculated Baseline</td>
-          <td>£<span id="row-steward">1,966.50</span></td>
-          <td>Post-Tithe Available</td>
+          <td>Available Pool</td>
+          <td>£<span id="row-steward">1,765.80</span></td>
+          <td>Your Net Income Post-Tithe </td>
         </tr>
         <tr>
-          <td><strong>Total DD (Spotify, Drive, MotionArray, Phone)</strong></td>
-          <td>Direct Debits</td>
-          <td>£<span id="row-dd">33.93</span></td>
-          <td>Fixed Subscriptions</td>
+          <td><strong>Direct Debits (Phone, Spotify, Drive, MotionArray)</strong></td>
+          <td>Fixed DDs</td>
+          <td>£<span id="row-dd">33.98</span></td>
+          <td>Digital Subscriptions & Mobile </td>
         </tr>
         <tr>
-          <td><strong>Rent & Utility Bills</strong></td>
+          <td><strong>Full House Living Bills</strong></td>
           <td>Living Essentials</td>
-          <td>£<span id="row-bills">1,734.00</span></td>
-          <td>Rent, Council Tax, Energy, Water, Net</td>
+          <td>£<span id="row-bills">1,738.50</span></td>
+          <td>Rent (£1,350), Council Tax (£232), Utilities (£156.50) </td>
         </tr>
         <tr>
-          <td><strong>DD (Santander Total)</strong></td>
-          <td>Combined Outflow</td>
-          <td>£<span id="row-santander">1,767.93</span></td>
-          <td>Total Essential Direct Debits</td>
+          <td><strong>Your Share of Bills</strong></td>
+          <td>John (Share)</td>
+          <td>£<span id="row-share">1,140.00</span></td>
+          <td>Personal Living Expense Share </td>
         </tr>
         <tr>
-          <td><strong>Baby Pot Junior ISA</strong></td>
+          <td><strong>Total Outgoings (Share + DDs)</strong></td>
+          <td>Core Outflow</td>
+          <td>£<span id="row-outgoing">1,173.98</span></td>
+          <td>66.5% of Stewardship Portion </td>
+        </tr>
+        <tr>
+          <td><strong>Save — Travel</strong></td>
+          <td>Sinking Fund</td>
+          <td>£<span id="row-travel">300.00</span></td>
+          <td>Designated Travel Pot (17.0%) </td>
+        </tr>
+        <tr>
+          <td><strong>Save — General</strong></td>
           <td>Savings Pot</td>
-          <td>£<span id="row-jisa">0.00</span></td>
-          <td>Daniel's Future Provision</td>
-        </tr>
-        <tr>
-          <td><strong>Save and Travel</strong></td>
-          <td>Flexible Pot</td>
-          <td>£<span id="row-travel">0.00</span></td>
-          <td>Family Sinking Fund</td>
+          <td>£<span id="row-save">50.00</span></td>
+          <td>Liquid Emergency Savings (2.8%) </td>
         </tr>
       </tbody>
     </table>
@@ -381,50 +393,67 @@
 </div>
 
 <script>
-  let godsMoneyData = JSON.parse(localStorage.getItem('wos_v6_3_gods_money')) || {
-    income: 2185.00,
-    tithe: 218.50,
-    stewardship: 1966.50,
-    dd: 33.93,
-    bills: 1734.00,
-    totalSantander: 1767.93,
-    babyPot: 0.00,
-    saveTravel: 0.00,
-    lastUpdated: 'Baseline (Gods money)'
+  // Updated default values matching your exact God's Money spreadsheet data
+  let godsMoneyData = JSON.parse(localStorage.getItem('wos_v6_4_gods_money')) || {
+    gross: 29802.53,
+    net: 23544.00,
+    income: 1962.00,
+    contribution: 600.00,
+    tithe: 196.20,
+    stewardship: 1765.80,
+    dd: 33.98,
+    bills: 1738.50,
+    share: 1140.00,
+    totalOutgoing: 1173.98,
+    travel: 300.00,
+    save: 50.00,
+    outgoingsTotal: 1720.18,
+    remaining: 241.82,
+    lastUpdated: 'Updated Baseline (Gods money)'
   };
 
   function updateUI() {
     const inc = Number(godsMoneyData.income);
+    const contrib = Number(godsMoneyData.contribution);
     const tithe = Number(godsMoneyData.tithe);
-    const santander = Number(godsMoneyData.totalSantander);
-    const remaining = inc - tithe - santander;
+    const billsShare = Number(godsMoneyData.share);
+    const dd = Number(godsMoneyData.dd);
+    const outgoing = Number(godsMoneyData.totalOutgoing || (billsShare + dd));
+    const travel = Number(godsMoneyData.travel);
+    const save = Number(godsMoneyData.save);
+    
+    // Remaining calculation
+    const totalOut = outgoing + travel + save;
+    const remaining = Number(godsMoneyData.remaining) || (inc - tithe - outgoing - travel - save);
 
     document.getElementById('disp-income').textContent = inc.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    document.getElementById('disp-contrib').textContent = contrib.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     document.getElementById('disp-tithe').textContent = tithe.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    document.getElementById('disp-bills').textContent = santander.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    document.getElementById('disp-bills').textContent = outgoing.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     document.getElementById('disp-remaining').textContent = remaining.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
     document.getElementById('sync-tithe-txt').textContent = tithe.toFixed(2);
-    document.getElementById('sync-bills-txt').textContent = santander.toFixed(2);
-    document.getElementById('sync-steward-txt').textContent = Number(godsMoneyData.stewardship).toFixed(2);
+    document.getElementById('sync-share-txt').textContent = billsShare.toFixed(2);
     document.getElementById('sync-rem-txt').textContent = remaining.toFixed(2);
 
     document.getElementById('row-inc').textContent = inc.toFixed(2);
+    document.getElementById('row-contrib').textContent = contrib.toFixed(2);
     document.getElementById('row-tithe').textContent = tithe.toFixed(2);
     document.getElementById('row-steward').textContent = Number(godsMoneyData.stewardship).toFixed(2);
-    document.getElementById('row-dd').textContent = Number(godsMoneyData.dd).toFixed(2);
+    document.getElementById('row-dd').textContent = dd.toFixed(2);
     document.getElementById('row-bills').textContent = Number(godsMoneyData.bills).toFixed(2);
-    document.getElementById('row-santander').textContent = santander.toFixed(2);
-    document.getElementById('row-jisa').textContent = Number(godsMoneyData.babyPot).toFixed(2);
-    document.getElementById('row-travel').textContent = Number(godsMoneyData.saveTravel).toFixed(2);
+    document.getElementById('row-share').textContent = billsShare.toFixed(2);
+    document.getElementById('row-outgoing').textContent = outgoing.toFixed(2);
+    document.getElementById('row-travel').textContent = travel.toFixed(2);
+    document.getElementById('row-save').textContent = save.toFixed(2);
 
     const alertBox = document.getElementById('gap-alert');
     if (remaining < 0) {
       alertBox.className = 'alert-box deficit';
-      alertBox.innerHTML = `⚠️ <strong>Outgoings Exceed Income:</strong> Monthly deficit of <strong>£${Math.abs(remaining).toFixed(2)}</strong>. Review Santander direct debits.`;
+      alertBox.innerHTML = `⚠️ <strong>Outgoings Exceed Income:</strong> Monthly deficit of <strong>£${Math.abs(remaining).toFixed(2)}</strong>. Reduce discretionary spend.`;
     } else {
       alertBox.className = 'alert-box surplus';
-      alertBox.innerHTML = `✓ <strong>Sheet Balanced:</strong> Post-outgoing buffer of <strong>£${remaining.toFixed(2)}/mo</strong> is available for designated savings pots.`;
+      alertBox.innerHTML = `✓ <strong>Budget Stable & Solvent:</strong> Total outgoings (£${totalOut.toFixed(2)}) leave a solid positive buffer of <strong>£${remaining.toFixed(2)}/mo</strong>.`;
     }
 
     document.getElementById('sync-status').textContent = `Last Synced: ${godsMoneyData.lastUpdated}`;
@@ -444,51 +473,54 @@
         const data = new Uint8Array(e.target.result);
         const workbook = XLSX.read(data, { type: 'array' });
 
-        // STRICT TARGET: Only look for God's money / Gods money
+        // STRICT TARGET: Locate Gods money / God's money tab
         let targetSheetName = workbook.SheetNames.find(n => {
           const clean = n.toLowerCase().replace(/['\s_-]/g, '');
           return clean.includes('godsmoney') || clean.includes('godmoney');
         });
 
         if (!targetSheetName) {
-          showToast(`⚠️ <strong>Sheet Not Found:</strong> Could not find sheet <em>"Gods money"</em> in ${file.name}. Please ensure the tab name is intact.`);
+          showToast(`⚠️ <strong>Sheet Not Found:</strong> Could not find sheet <em>"Gods money"</em> in ${file.name}.`);
           return;
         }
 
         const sheet = workbook.Sheets[targetSheetName];
         const grid = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-        // Parse exact labels from Gods money structure
+        // Direct key mapping for the updated spreadsheet schema
         grid.forEach(row => {
           if (!row) return;
           for (let c = 0; c < row.length; c++) {
             const cell = String(row[c] || '').toLowerCase().trim();
-            const nextVal = parseFloat(row[c + 1]);
-            const nextVal2 = parseFloat(row[c + 2]);
-            const val = !isNaN(nextVal) ? nextVal : (!isNaN(nextVal2) ? nextVal2 : null);
+            const val1 = parseFloat(row[c + 1]);
+            const val2 = parseFloat(row[c + 2]);
+            const val = !isNaN(val1) ? val1 : (!isNaN(val2) ? val2 : null);
 
             if (val !== null) {
-              if (cell.includes('your income') || cell === 'income') godsMoneyData.income = val;
+              if (cell.includes('gross')) godsMoneyData.gross = val;
+              if (cell.includes('net') && !cell.includes('internet')) godsMoneyData.net = val;
+              if (cell.includes('your income')) godsMoneyData.income = val;
+              if (cell.includes('contribution') && !cell.includes('total')) godsMoneyData.contribution = val;
               if (cell.includes('blessed reminder')) godsMoneyData.tithe = val;
               if (cell.includes('stewardship portion')) godsMoneyData.stewardship = val;
-              if (cell.includes('total') && (row[c-1] === 'DD' || cell.includes('dd'))) godsMoneyData.dd = val;
-              if (cell.includes('total') && cell.includes('bills')) godsMoneyData.bills = val;
-              if (cell.includes('dd (santander)') || cell.includes('total outgoing')) godsMoneyData.totalSantander = val;
-              if (cell.includes('baby pot')) godsMoneyData.babyPot = val;
-              if (cell.includes('save and travel')) godsMoneyData.saveTravel = val;
+              if (cell.includes('john (share)') || cell.includes('share of bills')) godsMoneyData.share = val;
+              if (cell.includes('total outgoing') || cell.includes('dd (santander)')) godsMoneyData.totalOutgoing = val;
+              if (cell === 'travel' || cell.includes('travel')) godsMoneyData.travel = val;
+              if (cell === 'save' || cell.includes('save,')) godsMoneyData.save = val;
+              if (cell.includes('remaining balance')) godsMoneyData.remaining = val;
             }
           }
         });
 
         const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
         godsMoneyData.lastUpdated = `${timeStr} (${file.name})`;
-        localStorage.setItem('wos_v6_3_gods_money', JSON.stringify(godsMoneyData));
+        localStorage.setItem('wos_v6_4_gods_money', JSON.stringify(godsMoneyData));
 
         document.getElementById('sheet-source-badge').textContent = `Sheet: ${targetSheetName}`;
         document.getElementById('file-sub-text').textContent = `✓ Successfully read ${file.name} [Sheet: ${targetSheetName}]`;
         
         updateUI();
-        showToast(`✓ <strong>Successfully synced with ${file.name}</strong> [Sheet: <em>${targetSheetName}</em>]<br/>Income: £${godsMoneyData.income.toFixed(2)} | Tithe: £${godsMoneyData.tithe.toFixed(2)} | Santander Outgoings: £${godsMoneyData.totalSantander.toFixed(2)}`);
+        showToast(`✓ <strong>Successfully synced with ${file.name}</strong> [Sheet: <em>${targetSheetName}</em>]<br/>Income: £${godsMoneyData.income.toFixed(2)} | Tithe: £${godsMoneyData.tithe.toFixed(2)} | Outgoing Share: £${godsMoneyData.totalOutgoing.toFixed(2)} | Buffer: £${godsMoneyData.remaining.toFixed(2)}`);
       } catch (err) {
         console.error(err);
         showToast(`⚠️ <strong>Sync Warning:</strong> Could not parse Gods money tab. Error: ${err.message}`);
