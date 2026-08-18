@@ -3,9 +3,11 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Wealth Operating System v5 — Dynamic Budget Integration</title>
+<title>Wealth Operating System v6 — Live Spreadsheet Engine</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -56,13 +58,80 @@
 
   h1 { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.03em; }
 
-  /* CASH FLOW CALCULATOR ENGINE */
+  /* EXCEL DROP ZONE & SYNC BAR */
+  .sync-card {
+    background: var(--surface);
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .sync-card.dragover {
+    border-color: var(--accent);
+    background: rgba(232, 255, 74, 0.05);
+  }
+
+  .sync-left { display: flex; align-items: center; gap: 14px; }
+  .sync-icon { font-size: 1.8rem; }
+  .sync-title { font-size: 0.95rem; font-weight: 700; }
+  .sync-sub { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--muted); }
+
+  .file-btn-wrapper {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+  }
+
+  .btn-upload {
+    background: var(--accent);
+    color: #000;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 10px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .file-input {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+
+  /* SCRIPTURE */
+  .scripture-card {
+    background: var(--surface);
+    border-left: 3px solid var(--accent);
+    padding: 14px 18px;
+    border-radius: 4px;
+    margin-bottom: 24px;
+  }
+  .scripture-quote { font-family: 'Space Mono', monospace; font-size: 0.8rem; color: var(--text); font-style: italic; }
+  .scripture-ref { font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--accent); margin-top: 4px; }
+
+  /* CASH FLOW ENGINE */
   .budget-engine {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 24px;
-    margin-bottom: 32px;
+    margin-bottom: 24px;
   }
 
   .engine-header {
@@ -74,16 +143,7 @@
     gap: 12px;
   }
 
-  .engine-title { font-size: 1.2rem; font-weight: 700; }
-  .engine-badge {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.72rem;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    padding: 4px 10px;
-    border-radius: 6px;
-    color: var(--accent);
-  }
+  .engine-title { font-size: 1.15rem; font-weight: 700; }
 
   .metrics-grid {
     display: grid;
@@ -99,12 +159,23 @@
     padding: 16px;
   }
 
-  .metric-label { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--muted); margin-bottom: 4px; }
-  .metric-val { font-family: 'Space Mono', monospace; font-size: 1.3rem; font-weight: 700; color: var(--text); }
+  .metric-label { font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; }
+  .metric-val { font-family: 'Space Mono', monospace; font-size: 1.4rem; font-weight: 700; color: var(--text); }
   .metric-sub { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
 
-  /* IMPACT DIAGNOSTIC BOXES */
-  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  /* ALERT BOX */
+  .alert-box {
+    padding: 14px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-family: 'Space Mono', monospace;
+    line-height: 1.5;
+  }
+  .alert-box.deficit { background: rgba(255, 107, 74, 0.1); border: 1px solid var(--orange); color: var(--orange); }
+  .alert-box.surplus { background: rgba(74, 255, 180, 0.1); border: 1px solid var(--green); color: var(--green); }
+
+  /* HELP & HINDER */
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 24px; }
 
   .impact-card {
     background: var(--surface);
@@ -116,172 +187,155 @@
   .impact-card.help { border-top: 4px solid var(--green); }
   .impact-card.hinder { border-top: 4px solid var(--orange); }
 
-  .impact-title {
-    font-size: 1rem;
-    font-weight: 700;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .impact-list { list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 0.88rem; }
-  .impact-list li { position: relative; padding-left: 18px; color: var(--text); }
-  .impact-list li::before {
-    position: absolute; left: 0; font-family: 'Space Mono', monospace; font-weight: bold;
-  }
+  .impact-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 12px; }
+  .impact-list { list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem; }
+  .impact-list li { position: relative; padding-left: 18px; }
+  .impact-list li::before { position: absolute; left: 0; font-family: 'Space Mono', monospace; font-weight: bold; }
   .help .impact-list li::before { content: "✓"; color: var(--green); }
   .hinder .impact-list li::before { content: "⚠"; color: var(--orange); }
 
-  /* PROJECTION ACCELERATOR CARD */
-  .proj-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 32px;
-  }
-
-  .table-mini { width: 100%; border-collapse: collapse; font-family: 'Space Mono', monospace; font-size: 0.82rem; margin-top: 12px; }
-  .table-mini th { text-align: left; border-bottom: 1px solid var(--border); padding: 8px 4px; color: var(--muted); }
+  /* TABLE */
+  .table-mini { width: 100%; border-collapse: collapse; font-family: 'Space Mono', monospace; font-size: 0.8rem; margin-top: 12px; }
+  .table-mini th { text-align: left; border-bottom: 1px solid var(--border); padding: 8px 4px; color: var(--muted); font-size: 0.72rem; }
   .table-mini td { padding: 8px 4px; border-bottom: 1px solid #1a1e2a; }
 
-  /* DYNAMIC MODAL & INPUTS */
-  .input-field {
-    background: var(--bg);
+  /* STATUS PILL */
+  .status-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: var(--surface2);
     border: 1px solid var(--border);
-    color: var(--accent);
-    font-family: 'Space Mono', monospace;
-    padding: 6px 10px;
-    border-radius: 6px;
-    width: 100%;
-    margin-top: 4px;
-  }
-
-  .btn-accent {
-    background: var(--accent);
-    color: #000;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-weight: 700;
-    cursor: pointer;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.8rem;
+    color: var(--muted);
   }
 </style>
 </head>
 <body>
 
 <div class="container">
+
   <header>
     <div>
-      <div class="header-tag">// SERVE GOD WIDDIT — WEALTH OS V5</div>
+      <div class="header-tag">// SERVE GOD WIDDIT — WEALTH OS V6</div>
       <h1>Budget-Anchored Wealth System</h1>
     </div>
     <div style="text-align: right;">
-      <span class="engine-badge">Synced with Excel: Rigid Budget Projections</span>
+      <span class="status-tag" id="sync-status">Status: Using Stored Values</span>
     </div>
   </header>
 
+  <div class="sync-card" id="drop-zone">
+    <div class="sync-left">
+      <div class="sync-icon">📁</div>
+      <div>
+        <div class="sync-title">Sync with Excel Workbook (.xlsx)</div>
+        <div class="sync-sub" id="file-sub-text">Drop <code>Serve_God_Widdit_to_analyse.xlsx</code> here to auto-update figures</div>
+      </div>
+    </div>
+    <div class="file-btn-wrapper">
+      <button class="btn-upload">Choose .xlsx File</button>
+      <input type="file" id="excel-input" class="file-input" accept=".xlsx, .xls, .csv" />
+    </div>
+  </div>
+
+  <div class="scripture-card">
+    <div class="scripture-quote">"So now let Pharaoh select a man discreet, understanding, and wise... let them gather all the food of those good years that are coming and store up grain..."</div>
+    <div class="scripture-ref">// Genesis 41:33–36 AMPC — Biblical Storage Principle</div>
+  </div>
+
   <div class="budget-engine">
     <div class="engine-header">
-      <div class="engine-title">📊 Live Budget Engine (Monthly Income vs Target Capital)</div>
-      <button class="btn-accent" onclick="recalculate()">Recalculate Projections</button>
+      <div class="engine-title">Live Monthly Cash Flow & Allocations</div>
+      <span class="status-tag" id="sheet-source-badge">Sheet: Rigid Budget Projections</span>
     </div>
 
     <div class="metrics-grid">
       <div class="metric-card">
         <div class="metric-label">Joint Net Income</div>
-        <div class="metric-val">£<span id="val-income">4,530</span></div>
-        <div class="metric-sub">Base Take-Home Pay</div>
+        <div class="metric-val">£<span id="disp-income">4,530</span></div>
+        <div class="metric-sub">Monthly Take-Home</div>
       </div>
       <div class="metric-card">
         <div class="metric-label">Blessed Reminder (10%)</div>
-        <div class="metric-val" style="color:var(--accent);">£<span id="val-tithe">453</span></div>
-        <div class="metric-sub">Tithe / Stewardship Portion</div>
+        <div class="metric-val" style="color:var(--accent);">£<span id="disp-tithe">453</span></div>
+        <div class="metric-sub">Tithe / Stewardship</div>
       </div>
       <div class="metric-card">
-        <div class="metric-label">Fixed Bills & Outgoings</div>
-        <div class="metric-val" style="color:var(--orange);">£<span id="val-bills">1,843</span></div>
+        <div class="metric-label">Essential Bills</div>
+        <div class="metric-val" style="color:var(--orange);">£<span id="disp-bills">1,843</span></div>
         <div class="metric-sub">Rent, Utilities, Council Tax</div>
       </div>
       <div class="metric-card">
-        <div class="metric-label">Target Investment Pot</div>
-        <div class="metric-val" style="color:var(--green);">£<span id="val-savings">906</span></div>
-        <div class="metric-sub">ISA, NS&I, Tandem, Junior ISA</div>
+        <div class="metric-label">Target Savings Pots</div>
+        <div class="metric-val" style="color:var(--green);">£<span id="disp-savings">906</span></div>
+        <div class="metric-sub">T212, NS&I, Tandem, J-ISA</div>
       </div>
     </div>
 
-    <div id="gap-alert" style="background: rgba(255,107,74,0.1); border: 1px solid var(--orange); padding: 12px; border-radius: 8px; font-size: 0.85rem; font-family:'Space Mono';">
-      ⚠️ <strong>Budget Gap Identified in Model:</strong> Target savings (£906) currently exceeds available uncommitted balance (£778) by <strong>£127.99/mo</strong>. Unbudgeted spending will immediately hinder your 5-year portfolio target.
+    <div id="gap-alert" class="alert-box deficit">
+      ⚠️ <strong>Budget Gap Identified:</strong> Target monthly investments exceed post-essential uncommitted cash by <span id="gap-amount">£127.99</span>/mo.
     </div>
   </div>
 
   <div class="grid-2">
     <div class="impact-card help">
-      <div class="impact-title">
-        <span style="color:var(--green)">▲ How Current Budgeting HELPS Future Wealth</span>
-      </div>
+      <div class="impact-title" style="color:var(--green)">▲ How Current Budgeting HELPS Trajectory</div>
       <ul class="impact-list">
-        <li><strong>Disciplined Capital Allocation:</strong> Allocating £906/month (20% joint net rate) compounds into ~£1.07M over 40 years in your rigid projection model.</li>
-        <li><strong>Protected Emergency Target:</strong> Fixed living outgoings capped at £1,842.99 establishes an exact 3-month safety threshold of £5,528.97 in liquid funds.</li>
-        <li><strong>Multi-Pot Diversification:</strong> Spreading monthly cash flow across Trading 212 (£543.60), NS&I (£181.20), Tandem (£181.20), and HL Junior ISA (£25) balances liquidity and long-term equity growth.</li>
+        <li><strong>Aggressive Accumulation Rate:</strong> Contributing £<span class="sync-sav-txt">906</span>/mo creates a 20% joint savings velocity that models ~£1.07M by Year 40.</li>
+        <li><strong>Strict Fixed Overhead:</strong> Locking essential bills at £<span class="sync-bills-txt">1,843</span> caps your 3-month safety buffer target firmly at £<span id="disp-efund">5,529</span>.</li>
+        <li><strong>Dedicated Family Provision:</strong> Consistent allocation to Daniel's HL Junior ISA provides compounding independent of personal accounts.</li>
       </ul>
     </div>
 
     <div class="impact-card hinder">
-      <div class="impact-title">
-        <span style="color:var(--orange)">▼ How Current Budgeting HINDERS Future Wealth</span>
-      </div>
+      <div class="impact-title" style="color:var(--orange)">▼ How Current Budgeting HINDERS Trajectory</div>
       <ul class="impact-list">
-        <li><strong>The £127.99 Monthly Deficit Risk:</strong> Your planned investment pots (£906) exceed post-essential cash (£778.01). Without strict control on food/personal spend, savings get diluted.</li>
-        <li><strong>Delayed Pension Match:</strong> Operating at £35k pre-probation limits NEST match until October 2026. Delaying the 8% switch leaves free employer money on the table.</li>
-        <li><strong>Discretionary Leakage:</strong> Weekly money check-ins highlight "eating out" as an avoidable leak that directly threatens the Trading 212 monthly allocation.</li>
+        <li><strong>Discretionary Deficit Risk:</strong> The <span id="gap-txt-2">£127.99</span> gap between target savings and uncommitted cash leaves zero margin for avoidable dining-out expenses.</li>
+        <li><strong>Pre-Probation Salary Floor:</strong> £35k baseline delays full NEST 8% employee match until probation sign-off (~Oct 2026).</li>
+        <li><strong>Cash Leakage Vulnerability:</strong> Weekly money check-ins show personal spending is the primary pressure point diluting monthly ISA deposits.</li>
       </ul>
     </div>
   </div>
 
-  <div class="proj-card">
-    <div style="font-weight:700; font-size:1.1rem; margin-bottom:8px;">🎯 Budget Allocation vs. Projected Outcome</div>
-    <div style="color:var(--muted); font-size:0.82rem;">Mapped directly from the <em>Rigid Budget Projections</em> spreadsheet sheet.</div>
-
+  <div class="budget-engine">
+    <div class="engine-title" style="margin-bottom:8px;">Portfolio Allocation from Sheet</div>
     <table class="table-mini">
       <thead>
         <tr>
-          <th>Pot / Goal</th>
-          <th>Provider / Account</th>
+          <th>Pot Name</th>
+          <th>Account / Provider</th>
           <th>Monthly Input</th>
-          <th>Annual Growth Rate</th>
-          <th>40-Yr Projected Value</th>
+          <th>Assumed Growth</th>
+          <th>Projected Outcome (40-Yr)</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><strong>Emergency Buffer</strong></td>
-          <td>NS&I Premium Bonds</td>
-          <td>£181.20</td>
-          <td>3.0%</td>
-          <td>~£167,800</td>
-        </tr>
-        <tr>
-          <td><strong>Investing (Core)</strong></td>
-          <td>Trading 212 Stocks ISA</td>
-          <td>£543.60</td>
+          <td><strong>Trading 212 ISA</strong></td>
+          <td>Stocks & Shares ISA</td>
+          <td>£<span id="pot-t212">543.60</span></td>
           <td>5.0%</td>
           <td>~£801,000</td>
         </tr>
         <tr>
-          <td><strong>Cash Savings</strong></td>
-          <td>Tandem Savings Account</td>
-          <td>£181.20</td>
+          <td><strong>NS&I Premium Bonds</strong></td>
+          <td>Emergency Buffer</td>
+          <td>£<span id="pot-nsi">181.20</span></td>
+          <td>3.0%</td>
+          <td>~£167,800</td>
+        </tr>
+        <tr>
+          <td><strong>Tandem Cash Savings</strong></td>
+          <td>High-Interest Pot</td>
+          <td>£<span id="pot-tandem">181.20</span></td>
           <td>3.4%</td>
           <td>~£182,300</td>
         </tr>
         <tr>
-          <td><strong>Daniel's Future</strong></td>
+          <td><strong>Daniel's Future Fund</strong></td>
           <td>HL Junior ISA</td>
-          <td>£25.00</td>
+          <td>£<span id="pot-jisa">25.00</span></td>
           <td>5.0%</td>
           <td>~£36,800</td>
         </tr>
@@ -289,53 +343,119 @@
     </table>
   </div>
 
-  <div class="budget-engine" style="border-color:var(--accent);">
-    <div class="engine-title" style="color:var(--accent); margin-bottom:12px;">⚡ 3-Step Action Plan to Eliminating Budget Friction</div>
-    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:16px;">
-      <div style="background:var(--surface2); padding:16px; border-radius:8px;">
-        <div style="font-family:'Space Mono'; color:var(--accent); font-size:0.75rem;">STEP 1 — IMMEDIATE</div>
-        <div style="font-weight:700; margin:4px 0;">Cap Discretionary Spend</div>
-        <div style="font-size:0.82rem; color:var(--muted);">Strictly cap eating out to eliminate the £127.99 monthly deficit between balance and target savings.</div>
-      </div>
-      <div style="background:var(--surface2); padding:16px; border-radius:8px;">
-        <div style="font-family:'Space Mono'; color:var(--green); font-size:0.75rem;">STEP 2 — OCT 2026</div>
-        <div style="font-weight:700; margin:4px 0;">Glider Probation & Pension Switch</div>
-        <div style="font-size:0.82rem; color:var(--muted);">Upon £37k salary bump, trigger the 8% NEST contribution and assign to the Global Equity Index fund.</div>
-      </div>
-      <div style="background:var(--surface2); padding:16px; border-radius:8px;">
-        <div style="font-family:'Space Mono'; color:var(--blue); font-size:0.75rem;">STEP 3 — ONGOING</div>
-        <div style="font-weight:700; margin:4px 0;">Automate Payday Transfers</div>
-        <div style="font-size:0.82rem; color:var(--muted);">Set standing orders for Trading 212 and NS&I on the 28th of every month so savings are never spent.</div>
-      </div>
-    </div>
-  </div>
-
 </div>
 
 <script>
-  function recalculate() {
-    const inc = 4530;
-    const tithe = inc * 0.10;
-    const savings = 906;
-    const bills = 1842.99;
-    const remaining = inc - tithe - bills;
+  // Default values matching your Excel baseline
+  let budgetData = JSON.parse(localStorage.getItem('wos_v6_data')) || {
+    income: 4530,
+    tithe: 453,
+    bills: 1842.99,
+    savings: 906,
+    pots: {
+      t212: 543.60,
+      nsi: 181.20,
+      tandem: 181.20,
+      jisa: 25.00
+    },
+    lastUpdated: 'Baseline Default'
+  };
 
-    document.getElementById('val-income').textContent = inc.toLocaleString();
-    document.getElementById('val-tithe').textContent = tithe.toLocaleString();
-    document.getElementById('val-bills').textContent = Math.round(bills).toLocaleString();
-    document.getElementById('val-savings').textContent = savings.toLocaleString();
+  function updateUI() {
+    const inc = budgetData.income;
+    const tithe = budgetData.tithe || (inc * 0.10);
+    const bills = budgetData.bills;
+    const savings = budgetData.savings;
+    const uncommitted = inc - tithe - bills;
+    const gap = savings - uncommitted;
 
-    const gap = savings - remaining;
+    document.getElementById('disp-income').textContent = Math.round(inc).toLocaleString();
+    document.getElementById('disp-tithe').textContent = Math.round(tithe).toLocaleString();
+    document.getElementById('disp-bills').textContent = Math.round(bills).toLocaleString();
+    document.getElementById('disp-savings').textContent = Math.round(savings).toLocaleString();
+    document.getElementById('disp-efund').textContent = Math.round(bills * 3).toLocaleString();
+
+    document.querySelectorAll('.sync-sav-txt').forEach(el => el.textContent = Math.round(savings).toLocaleString());
+    document.querySelectorAll('.sync-bills-txt').forEach(el => el.textContent = Math.round(bills).toLocaleString());
+
+    document.getElementById('pot-t212').textContent = budgetData.pots.t212.toFixed(2);
+    document.getElementById('pot-nsi').textContent = budgetData.pots.nsi.toFixed(2);
+    document.getElementById('pot-tandem').textContent = budgetData.pots.tandem.toFixed(2);
+    document.getElementById('pot-jisa').textContent = budgetData.pots.jisa.toFixed(2);
+
     const alertBox = document.getElementById('gap-alert');
     if (gap > 0) {
-      alertBox.style.display = 'block';
-      alertBox.innerHTML = `⚠️ <strong>Budget Gap Identified in Model:</strong> Target savings (£${savings}) currently exceeds available uncommitted balance (£${Math.round(remaining)}) by <strong>£${gap.toFixed(2)}/mo</strong>. Unbudgeted spending will immediately hinder your 5-year portfolio target.`;
+      alertBox.className = 'alert-box deficit';
+      alertBox.innerHTML = `⚠️ <strong>Budget Gap Identified:</strong> Target monthly investments exceed post-essential uncommitted cash (£${Math.round(uncommitted)}) by <strong>£${gap.toFixed(2)}/mo</strong>. Discretionary spending directly reduces your ISA allocation.`;
+      document.getElementById('gap-txt-2').textContent = '£' + gap.toFixed(2);
     } else {
-      alertBox.style.display = 'none';
+      alertBox.className = 'alert-box surplus';
+      alertBox.innerHTML = `✓ <strong>Budget Fully Funded:</strong> Uncommitted cash surplus of <strong>£${Math.abs(gap).toFixed(2)}/mo</strong> is available after fully funding all target investment pots.`;
+      document.getElementById('gap-txt-2').textContent = '£0.00';
     }
+
+    document.getElementById('sync-status').textContent = `Last Synced: ${budgetData.lastUpdated}`;
   }
 
-  recalculate();
+  // Excel File Parsing with SheetJS
+  function handleExcelFile(file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+
+      // Look for Rigid Budget Projections or Base Salary sheet
+      let sheetName = workbook.SheetNames.find(n => n.includes('Rigid') || n.includes('Base') || n.includes('God'));
+      if (!sheetName) sheetName = workbook.SheetNames[0];
+
+      const sheet = workbook.Sheets[sheetName];
+      const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+      // Scan rows for key labels
+      rows.forEach(r => {
+        if (!r || r.length < 2) return;
+        const label = String(r[0] || r[1]).toLowerCase();
+        const val = parseFloat(r[1]) || parseFloat(r[2]) || 0;
+
+        if (label.includes('monthly joint income') || label.includes('joint income')) {
+          if (val > 0) budgetData.income = val;
+        } else if (label.includes('blessed reminder') || label.includes('tithe')) {
+          if (val > 0) budgetData.tithe = val;
+        } else if (label.includes('one month emergency') || label.includes('total bills')) {
+          if (val > 0) budgetData.bills = val;
+        } else if (label.includes('total monthly contributions') || label.includes('joint savings')) {
+          if (val > 0) budgetData.savings = val;
+        }
+      });
+
+      budgetData.lastUpdated = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' (' + file.name + ')';
+      localStorage.setItem('wos_v6_data', JSON.stringify(budgetData));
+
+      document.getElementById('sheet-source-badge').textContent = `Source Sheet: ${sheetName}`;
+      document.getElementById('file-sub-text').textContent = `✓ Successfully synced with ${file.name}`;
+      updateUI();
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  // Event Listeners for File Drop / Input
+  const fileInput = document.getElementById('excel-input');
+  fileInput.addEventListener('change', (e) => {
+    if (e.target.files.length > 0) handleExcelFile(e.target.files[0]);
+  });
+
+  const dropZone = document.getElementById('drop-zone');
+  ['dragenter', 'dragover'].forEach(name => {
+    dropZone.addEventListener(name, (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+  });
+  ['dragleave', 'drop'].forEach(name => {
+    dropZone.addEventListener(name, (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); });
+  });
+  dropZone.addEventListener('drop', (e) => {
+    if (e.dataTransfer.files.length > 0) handleExcelFile(e.dataTransfer.files[0]);
+  });
+
+  updateUI();
 </script>
 </body>
 </html>
