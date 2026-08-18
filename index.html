@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Wealth Operating System v8 — Live Cloud Edition</title>
+<title>Wealth Operating System v8.1 — Resilient Cloud Sync Engine</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
@@ -64,7 +64,7 @@
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 16px 20px;
-    margin-bottom: 24px;
+    margin-bottom: 12px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -80,6 +80,8 @@
   .sync-title { font-size: 0.92rem; font-weight: 700; }
   .sync-sub { font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--muted); }
 
+  .sync-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
   .btn-action {
     background: var(--surface2);
     border: 1px solid var(--border);
@@ -87,7 +89,7 @@
     font-family: 'Space Mono', monospace;
     font-size: 0.75rem;
     font-weight: 700;
-    padding: 8px 16px;
+    padding: 8px 14px;
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -95,6 +97,25 @@
   .btn-action:hover {
     border-color: var(--accent);
     background: rgba(232, 255, 74, 0.08);
+  }
+
+  .file-btn-wrapper { position: relative; overflow: hidden; display: inline-block; }
+  .file-input { position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+
+  /* DIAGNOSTIC CONSOLE */
+  .debug-box {
+    display: none;
+    background: #090a0d;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    margin-bottom: 24px;
+    max-height: 160px;
+    overflow-y: auto;
+    white-space: pre-wrap;
   }
 
   /* SCRIPTURE */
@@ -142,7 +163,6 @@
     transition: width 0.4s ease;
   }
 
-  /* SECTION TITLES */
   .section-title {
     font-size: 1.15rem;
     font-weight: 700;
@@ -151,16 +171,8 @@
     align-items: center;
     gap: 8px;
   }
-  .section-title::before {
-    content: '';
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    background: var(--accent);
-    border-radius: 50%;
-  }
+  .section-title::before { content: ''; display: inline-block; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; }
 
-  /* GRIDS & CARDS */
   .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 24px; }
 
   .card {
@@ -279,24 +291,33 @@
 
   <header>
     <div>
-      <div class="header-tag">// SERVE GOD WIDDIT — WEALTH OS V8</div>
+      <div class="header-tag">// SERVE GOD WIDDIT — WEALTH OS V8.1</div>
       <h1>Live Cloud Trajectory & Budget Engine</h1>
     </div>
     <div style="text-align: right;">
-      <span class="status-tag" id="sync-status">Status: Initialising Cloud Sync...</span>
+      <span class="status-tag" id="sync-status">Status: Connecting...</span>
     </div>
   </header>
 
-  <div class="sync-card">
+  <div class="sync-card" id="drop-zone">
     <div class="sync-left">
-      <div class="sync-dot" id="sync-indicator"></div>
+      <div class="sync-dot loading" id="sync-indicator"></div>
       <div>
-        <div class="sync-title">Connected to Google Sheets Cloud Feed</div>
-        <div class="sync-sub" id="sync-time-sub">Auto-syncing data from <code>God's money</code> sheet</div>
+        <div class="sync-title">Google Sheets Live Feed (God's Money)</div>
+        <div class="sync-sub" id="sync-time-sub">Auto-sync active · Public CSV Endpoint</div>
       </div>
     </div>
-    <button class="btn-action" onclick="fetchLiveCloudData()">⚡ Sync with Cloud Now</button>
+    <div class="sync-actions">
+      <button class="btn-action" onclick="fetchLiveCloudData(true)">⚡ Force Refresh</button>
+      <button class="btn-action" onclick="toggleDebugConsole()">🔍 Inspect Data</button>
+      <div class="file-btn-wrapper">
+        <button class="btn-action" style="color:var(--text);">📁 Upload File</button>
+        <input type="file" id="excel-input" class="file-input" accept=".xlsx, .xls, .csv" />
+      </div>
+    </div>
   </div>
+
+  <div id="debug-console" class="debug-box">Console Initializing...</div>
 
   <div class="scripture-card">
     <div class="scripture-quote">"So now let Pharaoh select a man discreet, understanding, and wise... let them gather all the food of those good years that are coming and store up grain..."</div>
@@ -445,7 +466,6 @@
 </div>
 
 <script>
-  // YOUR PUBLIC GOOGLE SHEETS CSV ENDPOINT
   const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ0bEvTEPZvHVvbbCbqVS5ecl3VIlpr4ehy9ZreOW6HnwyUcVf3aPOHiJsgUMMRPQ/pub?gid=856851425&single=true&output=csv";
 
   let goals = [
@@ -456,7 +476,7 @@
     { key: 'milestone', label: 'The £1,000,000 Portfolio Goal', cur: 4315, max: 1000000, unit: '£', color: 'var(--orange)' }
   ];
 
-  let budgetData = JSON.parse(localStorage.getItem('wos_v8_cloud_engine')) || {
+  let budgetData = JSON.parse(localStorage.getItem('wos_v8_1_cloud')) || {
     gross: 29802.53,
     net: 23544.00,
     income: 1962.00,
@@ -574,8 +594,44 @@
     renderTrajectoryCards();
   }
 
-  // FETCH LIVE DATA DIRECT FROM GOOGLE SHEETS CSV ENDPOINT
-  async function fetchLiveCloudData() {
+  function parseSheetGrid(grid, logPrefix) {
+    let logs = [];
+    grid.forEach((row, rIdx) => {
+      if (!row) return;
+      for (let c = 0; c < row.length; c++) {
+        const cell = String(row[c] || '').toLowerCase().trim();
+        const val1 = parseFloat(row[c + 1]);
+        const val2 = parseFloat(row[c + 2]);
+        const val = !isNaN(val1) ? val1 : (!isNaN(val2) ? val2 : null);
+
+        if (val !== null) {
+          if (cell.includes('gross')) { budgetData.gross = val; logs.push(`Gross -> £${val}`); }
+          if (cell.includes('net') && !cell.includes('internet')) { budgetData.net = val; logs.push(`Net -> £${val}`); }
+          if (cell.includes('your income')) { budgetData.income = val; logs.push(`Your Income -> £${val}`); }
+          if (cell.includes('contribution') && !cell.includes('total')) { budgetData.contrib = val; logs.push(`Contrib -> £${val}`); }
+          if (cell.includes('blessed reminder')) { budgetData.tithe = val; logs.push(`Tithe -> £${val}`); }
+          if (cell.includes('stewardship portion')) { budgetData.stewardship = val; logs.push(`Stewardship -> £${val}`); }
+          if (cell.includes('john (share)') || cell.includes('share of bills')) { budgetData.share = val; logs.push(`Bill Share -> £${val}`); }
+          if (cell.includes('total outgoing') || cell.includes('dd (santander)')) { budgetData.totalOutgoing = val; logs.push(`Outgoings -> £${val}`); }
+          if (cell === 'travel' || cell.includes('travel')) { budgetData.travel = val; logs.push(`Travel Pot -> £${val}`); }
+          if (cell === 'save' || cell.includes('save,')) { budgetData.save = val; logs.push(`Save Pot -> £${val}`); }
+          if (cell.includes('remaining balance')) { budgetData.remaining = val; logs.push(`Remaining Buffer -> £${val}`); }
+        }
+      }
+    });
+
+    budgetData.goalsProgress[1] = Math.round(budgetData.gross);
+    budgetData.goalsProgress[2] = Math.round((budgetData.travel + budgetData.save) * 12);
+
+    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    budgetData.lastUpdated = `${logPrefix} @ ${timeStr}`;
+    localStorage.setItem('wos_v8_1_cloud', JSON.stringify(budgetData));
+
+    document.getElementById('debug-console').textContent = `[${timeStr}] Sync Success:\n` + logs.join('\n');
+  }
+
+  // RESILIENT CLOUD FETCH (Direct + CORS Proxy)
+  async function fetchLiveCloudData(force = false) {
     const indicator = document.getElementById('sync-indicator');
     const statusText = document.getElementById('sync-status');
     const subText = document.getElementById('sync-time-sub');
@@ -583,58 +639,72 @@
     indicator.className = 'sync-dot loading';
     statusText.textContent = 'Status: Fetching Live Google Sheet...';
 
-    try {
-      // Adding timestamp parameter to bypass browser caching of public Google Sheet CSV
-      const liveUrl = GOOGLE_SHEET_CSV_URL + '&_t=' + new Date().getTime();
-      const response = await fetch(liveUrl);
-      if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
+    const timestamp = Date.now();
+    const liveUrl = GOOGLE_SHEET_CSV_URL + `&_t=${timestamp}`;
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(liveUrl)}`;
 
-      const csvText = await response.text();
+    let csvText = null;
+
+    // Attempt 1: Direct Fetch
+    try {
+      const resp = await fetch(liveUrl, { cache: 'no-store' });
+      if (resp.ok) {
+        csvText = await resp.text();
+      }
+    } catch (e) {
+      console.warn('Direct fetch failed, trying proxy...', e);
+    }
+
+    // Attempt 2: CORS-Safe Proxy Fallback
+    if (!csvText) {
+      try {
+        const resp2 = await fetch(proxyUrl);
+        if (resp2.ok) {
+          csvText = await resp2.text();
+        }
+      } catch (e2) {
+        console.error('Proxy fetch failed:', e2);
+      }
+    }
+
+    if (csvText) {
       const workbook = XLSX.read(csvText, { type: 'string' });
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
       const grid = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-      grid.forEach(row => {
-        if (!row) return;
-        for (let c = 0; c < row.length; c++) {
-          const cell = String(row[c] || '').toLowerCase().trim();
-          const val1 = parseFloat(row[c + 1]);
-          const val2 = parseFloat(row[c + 2]);
-          const val = !isNaN(val1) ? val1 : (!isNaN(val2) ? val2 : null);
-
-          if (val !== null) {
-            if (cell.includes('gross')) budgetData.gross = val;
-            if (cell.includes('net') && !cell.includes('internet')) budgetData.net = val;
-            if (cell.includes('your income')) budgetData.income = val;
-            if (cell.includes('contribution') && !cell.includes('total')) budgetData.contrib = val;
-            if (cell.includes('blessed reminder')) budgetData.tithe = val;
-            if (cell.includes('stewardship portion')) budgetData.stewardship = val;
-            if (cell.includes('john (share)') || cell.includes('share of bills')) budgetData.share = val;
-            if (cell.includes('total outgoing') || cell.includes('dd (santander)')) budgetData.totalOutgoing = val;
-            if (cell === 'travel' || cell.includes('travel')) budgetData.travel = val;
-            if (cell === 'save' || cell.includes('save,')) budgetData.save = val;
-            if (cell.includes('remaining balance')) budgetData.remaining = val;
-          }
-        }
-      });
-
-      budgetData.goalsProgress[1] = Math.round(budgetData.gross);
-      budgetData.goalsProgress[2] = Math.round((budgetData.travel + budgetData.save) * 12);
-
-      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      budgetData.lastUpdated = `Synced with Google Sheets @ ${timeStr}`;
-      localStorage.setItem('wos_v8_cloud_engine', JSON.stringify(budgetData));
-
+      parseSheetGrid(grid, 'Synced with Cloud');
       indicator.className = 'sync-dot';
-      subText.textContent = `✓ Auto-synced live from Google Sheets at ${timeStr}`;
+      subText.textContent = `✓ Auto-synced live from Google Sheets at ${new Date().toLocaleTimeString()}`;
       updateUI();
-    } catch (err) {
-      console.error('Cloud Sync Error:', err);
+    } else {
       indicator.className = 'sync-dot error';
-      statusText.textContent = 'Status: Cloud Sync Failed (Using Local Storage)';
-      subText.textContent = `⚠️ Error fetching cloud feed: ${err.message}`;
+      statusText.textContent = 'Status: Cloud Feed Unreachable (Using Stored Data)';
+      subText.textContent = `⚠️ Check Google Sheet 'Publish to Web' status or use Manual Upload`;
       updateUI();
     }
+  }
+
+  function toggleDebugConsole() {
+    const consoleBox = document.getElementById('debug-console');
+    consoleBox.style.display = consoleBox.style.display === 'block' ? 'none' : 'block';
+  }
+
+  // File Upload fallback
+  function handleExcelFile(file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      let sheetName = workbook.SheetNames.find(n => n.toLowerCase().replace(/['\s_-]/g, '').includes('godsmoney')) || workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const grid = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+      parseSheetGrid(grid, `Parsed from ${file.name}`);
+      document.getElementById('sync-indicator').className = 'sync-dot';
+      document.getElementById('sync-time-sub').textContent = `✓ Parsed local file: ${file.name}`;
+      updateUI();
+    };
+    reader.readAsArrayBuffer(file);
   }
 
   function openModal(idx) {
@@ -668,13 +738,29 @@
   function saveProgress() {
     if (editingIdx !== null) {
       budgetData.goalsProgress[editingIdx] = +document.getElementById('modal-slider').value;
-      localStorage.setItem('wos_v8_cloud_engine', JSON.stringify(budgetData));
+      localStorage.setItem('wos_v8_1_cloud', JSON.stringify(budgetData));
       renderTrajectoryCards();
       closeModal();
     }
   }
 
-  // Fetch live cloud data immediately on startup
+  const fileInput = document.getElementById('excel-input');
+  fileInput.addEventListener('change', (e) => {
+    if (e.target.files.length > 0) handleExcelFile(e.target.files[0]);
+  });
+
+  const dropZone = document.getElementById('drop-zone');
+  ['dragenter', 'dragover'].forEach(name => {
+    dropZone.addEventListener(name, (e) => { e.preventDefault(); dropZone.style.borderColor = 'var(--accent)'; });
+  });
+  ['dragleave', 'drop'].forEach(name => {
+    dropZone.addEventListener(name, (e) => { e.preventDefault(); dropZone.style.borderColor = 'var(--border)'; });
+  });
+  dropZone.addEventListener('drop', (e) => {
+    if (e.dataTransfer.files.length > 0) handleExcelFile(e.dataTransfer.files[0]);
+  });
+
+  // Fetch immediately
   fetchLiveCloudData();
 </script>
 </body>
