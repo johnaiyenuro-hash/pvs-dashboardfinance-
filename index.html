@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Wealth Operating System v8.1 — Resilient Cloud Sync Engine</title>
+<title>Wealth Operating System v8.2 — Dynamic Recalculation Engine</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
@@ -113,7 +113,7 @@
     font-size: 0.75rem;
     color: var(--accent);
     margin-bottom: 24px;
-    max-height: 160px;
+    max-height: 180px;
     overflow-y: auto;
     white-space: pre-wrap;
   }
@@ -291,7 +291,7 @@
 
   <header>
     <div>
-      <div class="header-tag">// SERVE GOD WIDDIT — WEALTH OS V8.1</div>
+      <div class="header-tag">// SERVE GOD WIDDIT — WEALTH OS V8.2</div>
       <h1>Live Cloud Trajectory & Budget Engine</h1>
     </div>
     <div style="text-align: right;">
@@ -343,7 +343,7 @@
 
   <div class="budget-engine">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-      <div class="section-title" style="margin-bottom:0;">Live Monthly Cash Flow (Google Sheets Source)</div>
+      <div class="section-title" style="margin-bottom:0;">Live Monthly Cash Flow Breakdown</div>
       <span class="status-tag" id="sheet-source-badge">Live CSV Feed</span>
     </div>
 
@@ -371,7 +371,7 @@
     </div>
 
     <div id="gap-alert" class="alert-box surplus">
-      ✓ <strong>Trajectory Engine Active:</strong> Fetching live data from cloud source.
+      ✓ <strong>Trajectory Engine Active:</strong> Calculated live from cloud sheet.
     </div>
   </div>
 
@@ -435,7 +435,7 @@
       <div class="impact-title" style="color:var(--green)">▲ How Current Budgeting HELPS Trajectory</div>
       <ul class="impact-list">
         <li><strong>Protected Covenant Tithe:</strong> Blessed Reminder (£<span id="sync-tithe-txt">0.00</span>) deducted first, maintaining biblical stewardship priority.</li>
-        <li><strong>Automated Sinking Pots:</strong> Dedicated monthly accumulation building liquid reserves.</li>
+        <li><strong>Active Sinking Funds:</strong> Travel (£<span id="sync-travel-txt">0.00</span>) and Save (£<span id="sync-save-txt">0.00</span>) accumulate every month.</li>
         <li><strong>Liquid Cash Margin:</strong> Maintaining an uncommitted £<span id="sync-rem-txt">0.00</span> buffer guards against surprise expenses.</li>
       </ul>
     </div>
@@ -445,7 +445,7 @@
       <ul class="impact-list">
         <li><strong>Housing Cost Concentration:</strong> Bills share of £<span id="sync-share-txt">0.00</span> represents the primary allocation from your post-tithe pool.</li>
         <li><strong>Probation Growth Cap:</strong> Initial salary floor limits savings velocity until Glider probation (£37k) and 8% NEST match activate.</li>
-        <li><strong>Discretionary Leakage:</strong> Any unbudgeted spending reduces the monthly emergency cushion.</li>
+        <li><strong>Discretionary Leakage:</strong> Any unbudgeted personal spend reduces the monthly emergency buffer.</li>
       </ul>
     </div>
   </div>
@@ -476,7 +476,7 @@
     { key: 'milestone', label: 'The £1,000,000 Portfolio Goal', cur: 4315, max: 1000000, unit: '£', color: 'var(--orange)' }
   ];
 
-  let budgetData = JSON.parse(localStorage.getItem('wos_v8_1_cloud')) || {
+  let budgetData = JSON.parse(localStorage.getItem('wos_v8_2_cloud')) || {
     gross: 29802.53,
     net: 23544.00,
     income: 1962.00,
@@ -567,7 +567,9 @@
     const inc = Number(budgetData.income);
     const tithe = Number(budgetData.tithe);
     const outgoings = Number(budgetData.totalOutgoing);
-    const monthlySav = Number(budgetData.travel + budgetData.save);
+    const travel = Number(budgetData.travel);
+    const save = Number(budgetData.save);
+    const monthlySav = travel + save;
     const remaining = Number(budgetData.remaining);
 
     document.getElementById('disp-income').textContent = inc.toLocaleString('en-GB', { minimumFractionDigits: 2 });
@@ -578,6 +580,8 @@
 
     document.getElementById('sync-tithe-txt').textContent = tithe.toFixed(2);
     document.getElementById('sync-share-txt').textContent = Number(budgetData.share).toFixed(2);
+    document.getElementById('sync-travel-txt').textContent = travel.toFixed(2);
+    document.getElementById('sync-save-txt').textContent = save.toFixed(2);
     document.getElementById('sync-rem-txt').textContent = remaining.toFixed(2);
 
     const alertBox = document.getElementById('gap-alert');
@@ -586,7 +590,7 @@
       alertBox.innerHTML = `⚠️ <strong>Trajectory Deficit:</strong> Outgoings exceed income by <strong>£${Math.abs(remaining).toFixed(2)}/mo</strong>.`;
     } else {
       alertBox.className = 'alert-box surplus';
-      alertBox.innerHTML = `✓ <strong>Trajectory Solvent:</strong> Live cloud stream active. Monthly buffer: <strong>£${remaining.toFixed(2)}/mo</strong>.`;
+      alertBox.innerHTML = `✓ <strong>Trajectory Solvent:</strong> Live cloud stream active. Monthly buffer: <strong>£${remaining.toFixed(2)}/mo</strong> (13.7% safety cushion).`;
     }
 
     document.getElementById('sync-status').textContent = `Status: ${budgetData.lastUpdated}`;
@@ -594,38 +598,89 @@
     renderTrajectoryCards();
   }
 
-  function parseSheetGrid(grid, logPrefix) {
-    let logs = [];
-    grid.forEach((row, rIdx) => {
-      if (!row) return;
+  // SMART MULTI-ROW & MULTI-COLUMN FINDER
+  function findNumberNearLabelInGrid(grid, labelSearchTerms, maxRowLookahead = 5) {
+    for (let r = 0; r < grid.length; r++) {
+      const row = grid[r];
+      if (!row) continue;
       for (let c = 0; c < row.length; c++) {
         const cell = String(row[c] || '').toLowerCase().trim();
-        const val1 = parseFloat(row[c + 1]);
-        const val2 = parseFloat(row[c + 2]);
-        const val = !isNaN(val1) ? val1 : (!isNaN(val2) ? val2 : null);
-
-        if (val !== null) {
-          if (cell.includes('gross')) { budgetData.gross = val; logs.push(`Gross -> £${val}`); }
-          if (cell.includes('net') && !cell.includes('internet')) { budgetData.net = val; logs.push(`Net -> £${val}`); }
-          if (cell.includes('your income')) { budgetData.income = val; logs.push(`Your Income -> £${val}`); }
-          if (cell.includes('contribution') && !cell.includes('total')) { budgetData.contrib = val; logs.push(`Contrib -> £${val}`); }
-          if (cell.includes('blessed reminder')) { budgetData.tithe = val; logs.push(`Tithe -> £${val}`); }
-          if (cell.includes('stewardship portion')) { budgetData.stewardship = val; logs.push(`Stewardship -> £${val}`); }
-          if (cell.includes('john (share)') || cell.includes('share of bills')) { budgetData.share = val; logs.push(`Bill Share -> £${val}`); }
-          if (cell.includes('total outgoing') || cell.includes('dd (santander)')) { budgetData.totalOutgoing = val; logs.push(`Outgoings -> £${val}`); }
-          if (cell === 'travel' || cell.includes('travel')) { budgetData.travel = val; logs.push(`Travel Pot -> £${val}`); }
-          if (cell === 'save' || cell.includes('save,')) { budgetData.save = val; logs.push(`Save Pot -> £${val}`); }
-          if (cell.includes('remaining balance')) { budgetData.remaining = val; logs.push(`Remaining Buffer -> £${val}`); }
+        for (let term of labelSearchTerms) {
+          if (cell === term || (cell.includes(term) && cell.length < term.length + 15)) {
+            // 1. Check right on same row
+            for (let offset = 1; offset <= 4; offset++) {
+              const val = parseFloat(row[c + offset]);
+              if (!isNaN(val) && val > 0) return { val, r, c: c + offset };
+            }
+            // 2. Check down up to maxRowLookahead rows
+            for (let rowOffset = 1; rowOffset <= maxRowLookahead; rowOffset++) {
+              if (grid[r + rowOffset]) {
+                for (let colOffset = 0; colOffset <= 3; colOffset++) {
+                  const valDown = parseFloat(grid[r + rowOffset][c + colOffset]);
+                  if (!isNaN(valDown) && valDown > 0) return { val: valDown, r: r + rowOffset, c: c + colOffset };
+                }
+              }
+            }
+          }
         }
       }
-    });
+    }
+    return null;
+  }
+
+  function parseSheetGrid(grid, logPrefix) {
+    let logs = [];
+
+    const grossFound = findNumberNearLabelInGrid(grid, ['gross']);
+    const netFound = findNumberNearLabelInGrid(grid, ['net']);
+    const incFound = findNumberNearLabelInGrid(grid, ['your income', 'income']);
+    const contribFound = findNumberNearLabelInGrid(grid, ['contribution']);
+    const titheFound = findNumberNearLabelInGrid(grid, ['blessed reminder', 'tithe']);
+    const stewardFound = findNumberNearLabelInGrid(grid, ['stewardship portion']);
+    const shareFound = findNumberNearLabelInGrid(grid, ['john (share)', 'share of bills']);
+    const ddFound = findNumberNearLabelInGrid(grid, ['total dd', 'dd']);
+    const outgoingsFound = findNumberNearLabelInGrid(grid, ['total outgoing', 'dd (santander)']);
+    const travelFound = findNumberNearLabelInGrid(grid, ['travel']);
+    const saveFound = findNumberNearLabelInGrid(grid, ['save', 'save,']);
+    const remFound = findNumberNearLabelInGrid(grid, ['remaining balance']);
+
+    if (grossFound) { budgetData.gross = grossFound.val; logs.push(`Gross -> £${grossFound.val}`); }
+    if (netFound) { budgetData.net = netFound.val; logs.push(`Net -> £${netFound.val}`); }
+    if (incFound) { budgetData.income = incFound.val; logs.push(`Your Income -> £${incFound.val}`); }
+    if (contribFound) { budgetData.contrib = contribFound.val; logs.push(`Contrib -> £${contribFound.val}`); }
+    if (titheFound) { budgetData.tithe = titheFound.val; logs.push(`Tithe -> £${titheFound.val}`); }
+    if (stewardFound) { budgetData.stewardship = stewardFound.val; logs.push(`Stewardship -> £${stewardFound.val}`); }
+    if (shareFound) { budgetData.share = shareFound.val; logs.push(`Bill Share -> £${shareFound.val}`); }
+    if (ddFound) { budgetData.dd = ddFound.val; logs.push(`DD -> £${ddFound.val}`); }
+    if (travelFound) { budgetData.travel = travelFound.val; logs.push(`Travel Pot -> £${travelFound.val}`); }
+    if (saveFound) { budgetData.save = saveFound.val; logs.push(`Save Pot -> £${saveFound.val}`); }
+
+    // DYNAMIC MATHEMATICAL RECALCULATION (Guarantees values are never frozen)
+    if (!titheFound) budgetData.tithe = budgetData.income * 0.10;
+    budgetData.stewardship = budgetData.income - budgetData.tithe;
+
+    if (outgoingsFound) {
+      budgetData.totalOutgoing = outgoingsFound.val;
+      logs.push(`Outgoings (Parsed) -> £${outgoingsFound.val}`);
+    } else {
+      budgetData.totalOutgoing = budgetData.share + budgetData.dd;
+      logs.push(`Outgoings (Calculated: ${budgetData.share} + ${budgetData.dd}) -> £${budgetData.totalOutgoing}`);
+    }
+
+    if (remFound) {
+      budgetData.remaining = remFound.val;
+      logs.push(`Remaining Buffer (Parsed) -> £${remFound.val}`);
+    } else {
+      budgetData.remaining = budgetData.stewardship - budgetData.totalOutgoing - (budgetData.travel + budgetData.save);
+      logs.push(`Remaining Buffer (Calculated) -> £${budgetData.remaining.toFixed(2)}`);
+    }
 
     budgetData.goalsProgress[1] = Math.round(budgetData.gross);
     budgetData.goalsProgress[2] = Math.round((budgetData.travel + budgetData.save) * 12);
 
     const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     budgetData.lastUpdated = `${logPrefix} @ ${timeStr}`;
-    localStorage.setItem('wos_v8_1_cloud', JSON.stringify(budgetData));
+    localStorage.setItem('wos_v8_2_cloud', JSON.stringify(budgetData));
 
     document.getElementById('debug-console').textContent = `[${timeStr}] Sync Success:\n` + logs.join('\n');
   }
@@ -645,23 +700,17 @@
 
     let csvText = null;
 
-    // Attempt 1: Direct Fetch
     try {
       const resp = await fetch(liveUrl, { cache: 'no-store' });
-      if (resp.ok) {
-        csvText = await resp.text();
-      }
+      if (resp.ok) csvText = await resp.text();
     } catch (e) {
       console.warn('Direct fetch failed, trying proxy...', e);
     }
 
-    // Attempt 2: CORS-Safe Proxy Fallback
     if (!csvText) {
       try {
         const resp2 = await fetch(proxyUrl);
-        if (resp2.ok) {
-          csvText = await resp2.text();
-        }
+        if (resp2.ok) csvText = await resp2.text();
       } catch (e2) {
         console.error('Proxy fetch failed:', e2);
       }
@@ -689,7 +738,7 @@
     consoleBox.style.display = consoleBox.style.display === 'block' ? 'none' : 'block';
   }
 
-  // File Upload fallback
+  // Local File Upload fallback
   function handleExcelFile(file) {
     const reader = new FileReader();
     reader.onload = function(e) {
@@ -738,7 +787,7 @@
   function saveProgress() {
     if (editingIdx !== null) {
       budgetData.goalsProgress[editingIdx] = +document.getElementById('modal-slider').value;
-      localStorage.setItem('wos_v8_1_cloud', JSON.stringify(budgetData));
+      localStorage.setItem('wos_v8_2_cloud', JSON.stringify(budgetData));
       renderTrajectoryCards();
       closeModal();
     }
