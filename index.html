@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Wealth Operating System v6 — Live Spreadsheet Engine</title>
+<title>Wealth Operating System v6.2 — Live Spreadsheet Engine</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
@@ -58,19 +58,19 @@
 
   h1 { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.03em; }
 
-  /* EXCEL DROP ZONE & SYNC BAR */
+  /* EXCEL UPLOAD BOX */
   .sync-card {
     background: var(--surface);
     border: 2px dashed var(--border);
     border-radius: 12px;
     padding: 20px;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 16px;
-    transition: border-color 0.2s, background 0.2s;
+    transition: all 0.2s ease;
   }
 
   .sync-card.dragover {
@@ -99,9 +99,6 @@
     border-radius: 6px;
     cursor: pointer;
     border: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
   }
 
   .file-input {
@@ -114,18 +111,26 @@
     cursor: pointer;
   }
 
-  /* SCRIPTURE */
-  .scripture-card {
-    background: var(--surface);
-    border-left: 3px solid var(--accent);
-    padding: 14px 18px;
-    border-radius: 4px;
+  /* TOAST NOTIFICATION */
+  .sync-toast {
+    display: none;
+    background: rgba(74, 255, 180, 0.1);
+    border: 1px solid var(--green);
+    color: var(--green);
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
     margin-bottom: 24px;
+    animation: fadeIn 0.3s ease;
   }
-  .scripture-quote { font-family: 'Space Mono', monospace; font-size: 0.8rem; color: var(--text); font-style: italic; }
-  .scripture-ref { font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--accent); margin-top: 4px; }
 
-  /* CASH FLOW ENGINE */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* BUDGET ENGINE */
   .budget-engine {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -163,7 +168,7 @@
   .metric-val { font-family: 'Space Mono', monospace; font-size: 1.4rem; font-weight: 700; color: var(--text); }
   .metric-sub { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
 
-  /* ALERT BOX */
+  /* ALERTS */
   .alert-box {
     padding: 14px 16px;
     border-radius: 8px;
@@ -174,7 +179,7 @@
   .alert-box.deficit { background: rgba(255, 107, 74, 0.1); border: 1px solid var(--orange); color: var(--orange); }
   .alert-box.surplus { background: rgba(74, 255, 180, 0.1); border: 1px solid var(--green); color: var(--green); }
 
-  /* HELP & HINDER */
+  /* DIAGNOSTICS */
   .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 24px; }
 
   .impact-card {
@@ -194,12 +199,10 @@
   .help .impact-list li::before { content: "✓"; color: var(--green); }
   .hinder .impact-list li::before { content: "⚠"; color: var(--orange); }
 
-  /* TABLE */
   .table-mini { width: 100%; border-collapse: collapse; font-family: 'Space Mono', monospace; font-size: 0.8rem; margin-top: 12px; }
   .table-mini th { text-align: left; border-bottom: 1px solid var(--border); padding: 8px 4px; color: var(--muted); font-size: 0.72rem; }
   .table-mini td { padding: 8px 4px; border-bottom: 1px solid #1a1e2a; }
 
-  /* STATUS PILL */
   .status-tag {
     font-family: 'Space Mono', monospace;
     font-size: 0.68rem;
@@ -217,11 +220,11 @@
 
   <header>
     <div>
-      <div class="header-tag">// SERVE GOD WIDDIT — WEALTH OS V6</div>
+      <div class="header-tag">// SERVE GOD WIDDIT — WEALTH OS V6.2</div>
       <h1>Budget-Anchored Wealth System</h1>
     </div>
     <div style="text-align: right;">
-      <span class="status-tag" id="sync-status">Status: Using Stored Values</span>
+      <span class="status-tag" id="sync-status">Status: Stored Baseline</span>
     </div>
   </header>
 
@@ -229,20 +232,17 @@
     <div class="sync-left">
       <div class="sync-icon">📁</div>
       <div>
-        <div class="sync-title">Sync with Excel Workbook (.xlsx)</div>
-        <div class="sync-sub" id="file-sub-text">Drop <code>Serve_God_Widdit_to_analyse.xlsx</code> here to auto-update figures</div>
+        <div class="sync-title">Sync Workbook (Serve_God_Widdit_to_analyse.xlsx)</div>
+        <div class="sync-sub" id="file-sub-text">Click or drag & drop your Excel workbook here to recalculate live</div>
       </div>
     </div>
     <div class="file-btn-wrapper">
-      <button class="btn-upload">Choose .xlsx File</button>
+      <button class="btn-upload">Upload .xlsx</button>
       <input type="file" id="excel-input" class="file-input" accept=".xlsx, .xls, .csv" />
     </div>
   </div>
 
-  <div class="scripture-card">
-    <div class="scripture-quote">"So now let Pharaoh select a man discreet, understanding, and wise... let them gather all the food of those good years that are coming and store up grain..."</div>
-    <div class="scripture-ref">// Genesis 41:33–36 AMPC — Biblical Storage Principle</div>
-  </div>
+  <div id="sync-toast" class="sync-toast"></div>
 
   <div class="budget-engine">
     <div class="engine-header">
@@ -346,18 +346,12 @@
 </div>
 
 <script>
-  // Default values matching your Excel baseline
-  let budgetData = JSON.parse(localStorage.getItem('wos_v6_data')) || {
+  let budgetData = JSON.parse(localStorage.getItem('wos_v6_2_data')) || {
     income: 4530,
     tithe: 453,
     bills: 1842.99,
     savings: 906,
-    pots: {
-      t212: 543.60,
-      nsi: 181.20,
-      tandem: 181.20,
-      jisa: 25.00
-    },
+    pots: { t212: 543.60, nsi: 181.20, tandem: 181.20, jisa: 25.00 },
     lastUpdated: 'Baseline Default'
   };
 
@@ -369,24 +363,24 @@
     const uncommitted = inc - tithe - bills;
     const gap = savings - uncommitted;
 
-    document.getElementById('disp-income').textContent = Math.round(inc).toLocaleString();
-    document.getElementById('disp-tithe').textContent = Math.round(tithe).toLocaleString();
-    document.getElementById('disp-bills').textContent = Math.round(bills).toLocaleString();
-    document.getElementById('disp-savings').textContent = Math.round(savings).toLocaleString();
-    document.getElementById('disp-efund').textContent = Math.round(bills * 3).toLocaleString();
+    document.getElementById('disp-income').textContent = Math.round(inc).toLocaleString('en-GB');
+    document.getElementById('disp-tithe').textContent = Math.round(tithe).toLocaleString('en-GB');
+    document.getElementById('disp-bills').textContent = Math.round(bills).toLocaleString('en-GB');
+    document.getElementById('disp-savings').textContent = Math.round(savings).toLocaleString('en-GB');
+    document.getElementById('disp-efund').textContent = Math.round(bills * 3).toLocaleString('en-GB');
 
-    document.querySelectorAll('.sync-sav-txt').forEach(el => el.textContent = Math.round(savings).toLocaleString());
-    document.querySelectorAll('.sync-bills-txt').forEach(el => el.textContent = Math.round(bills).toLocaleString());
+    document.querySelectorAll('.sync-sav-txt').forEach(el => el.textContent = Math.round(savings).toLocaleString('en-GB'));
+    document.querySelectorAll('.sync-bills-txt').forEach(el => el.textContent = Math.round(bills).toLocaleString('en-GB'));
 
-    document.getElementById('pot-t212').textContent = budgetData.pots.t212.toFixed(2);
-    document.getElementById('pot-nsi').textContent = budgetData.pots.nsi.toFixed(2);
-    document.getElementById('pot-tandem').textContent = budgetData.pots.tandem.toFixed(2);
-    document.getElementById('pot-jisa').textContent = budgetData.pots.jisa.toFixed(2);
+    document.getElementById('pot-t212').textContent = Number(budgetData.pots.t212).toFixed(2);
+    document.getElementById('pot-nsi').textContent = Number(budgetData.pots.nsi).toFixed(2);
+    document.getElementById('pot-tandem').textContent = Number(budgetData.pots.tandem).toFixed(2);
+    document.getElementById('pot-jisa').textContent = Number(budgetData.pots.jisa).toFixed(2);
 
     const alertBox = document.getElementById('gap-alert');
     if (gap > 0) {
       alertBox.className = 'alert-box deficit';
-      alertBox.innerHTML = `⚠️ <strong>Budget Gap Identified:</strong> Target monthly investments exceed post-essential uncommitted cash (£${Math.round(uncommitted)}) by <strong>£${gap.toFixed(2)}/mo</strong>. Discretionary spending directly reduces your ISA allocation.`;
+      alertBox.innerHTML = `⚠️ <strong>Budget Gap Identified:</strong> Target monthly investments exceed post-essential uncommitted cash (£${Math.round(uncommitted).toLocaleString('en-GB')}) by <strong>£${gap.toFixed(2)}/mo</strong>. Discretionary spending directly reduces your ISA allocation.`;
       document.getElementById('gap-txt-2').textContent = '£' + gap.toFixed(2);
     } else {
       alertBox.className = 'alert-box surplus';
@@ -397,48 +391,92 @@
     document.getElementById('sync-status').textContent = `Last Synced: ${budgetData.lastUpdated}`;
   }
 
-  // Excel File Parsing with SheetJS
+  function showToast(msg) {
+    const toast = document.getElementById('sync-toast');
+    toast.style.display = 'block';
+    toast.innerHTML = msg;
+    setTimeout(() => { toast.style.display = 'none'; }, 6000);
+  }
+
+  // Multi-Column Smart Value Finder
+  function findNumberNearLabel(grid, searchTerms) {
+    for (let r = 0; r < grid.length; r++) {
+      const row = grid[r];
+      if (!row) continue;
+      for (let c = 0; c < row.length; c++) {
+        const cell = String(row[c] || '').toLowerCase().trim();
+        for (let term of searchTerms) {
+          if (cell.includes(term.toLowerCase())) {
+            // Check adjacent cells to the right and below for a number
+            for (let offset = 1; offset <= 4; offset++) {
+              const rightVal = parseFloat(row[c + offset]);
+              if (!isNaN(rightVal) && rightVal > 0) return rightVal;
+            }
+            if (grid[r + 1]) {
+              const downVal = parseFloat(grid[r + 1][c]);
+              if (!isNaN(downVal) && downVal > 0) return downVal;
+            }
+          }
+        }
+      }
+    }
+    return null;
+  }
+
   function handleExcelFile(file) {
     const reader = new FileReader();
     reader.onload = function(e) {
-      const data = new Uint8Array(e.target.result);
-      const workbook = XLSX.read(data, { type: 'array' });
+      try {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
 
-      // Look for Rigid Budget Projections or Base Salary sheet
-      let sheetName = workbook.SheetNames.find(n => n.includes('Rigid') || n.includes('Base') || n.includes('God'));
-      if (!sheetName) sheetName = workbook.SheetNames[0];
+        let matchedSheet = workbook.SheetNames.find(n => 
+          n.toLowerCase().includes('rigid') || 
+          n.toLowerCase().includes('base') || 
+          n.toLowerCase().includes('god') ||
+          n.toLowerCase().includes('maternity')
+        ) || workbook.SheetNames[0];
 
-      const sheet = workbook.Sheets[sheetName];
-      const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+        const sheet = workbook.Sheets[matchedSheet];
+        const grid = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-      // Scan rows for key labels
-      rows.forEach(r => {
-        if (!r || r.length < 2) return;
-        const label = String(r[0] || r[1]).toLowerCase();
-        const val = parseFloat(r[1]) || parseFloat(r[2]) || 0;
+        const parsedIncome = findNumberNearLabel(grid, ['monthly joint income', 'joint income', 'net']);
+        const parsedTithe = findNumberNearLabel(grid, ['blessed reminder', 'tithe']);
+        const parsedBills = findNumberNearLabel(grid, ['one month emergency', 'total outgoings', 'total bills', '1842.99']);
+        const parsedSavings = findNumberNearLabel(grid, ['total monthly contributions', 'joint savings', '906']);
 
-        if (label.includes('monthly joint income') || label.includes('joint income')) {
-          if (val > 0) budgetData.income = val;
-        } else if (label.includes('blessed reminder') || label.includes('tithe')) {
-          if (val > 0) budgetData.tithe = val;
-        } else if (label.includes('one month emergency') || label.includes('total bills')) {
-          if (val > 0) budgetData.bills = val;
-        } else if (label.includes('total monthly contributions') || label.includes('joint savings')) {
-          if (val > 0) budgetData.savings = val;
-        }
-      });
+        const parsedT212 = findNumberNearLabel(grid, ['trading 212', 'investing']);
+        const parsedNSI = findNumberNearLabel(grid, ['ns&i', 'premium bonds']);
+        const parsedTandem = findNumberNearLabel(grid, ['tandem', 'savings']);
+        const parsedJISA = findNumberNearLabel(grid, ['junior isa', 'daniel']);
 
-      budgetData.lastUpdated = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' (' + file.name + ')';
-      localStorage.setItem('wos_v6_data', JSON.stringify(budgetData));
+        if (parsedIncome) budgetData.income = parsedIncome;
+        if (parsedTithe) budgetData.tithe = parsedTithe;
+        if (parsedBills) budgetData.bills = parsedBills;
+        if (parsedSavings) budgetData.savings = parsedSavings;
 
-      document.getElementById('sheet-source-badge').textContent = `Source Sheet: ${sheetName}`;
-      document.getElementById('file-sub-text').textContent = `✓ Successfully synced with ${file.name}`;
-      updateUI();
+        if (parsedT212) budgetData.pots.t212 = parsedT212;
+        if (parsedNSI) budgetData.pots.nsi = parsedNSI;
+        if (parsedTandem) budgetData.pots.tandem = parsedTandem;
+        if (parsedJISA) budgetData.pots.jisa = parsedJISA;
+
+        const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        budgetData.lastUpdated = `${timeStr} (${file.name})`;
+        localStorage.setItem('wos_v6_2_data', JSON.stringify(budgetData));
+
+        document.getElementById('sheet-source-badge').textContent = `Source Sheet: ${matchedSheet}`;
+        document.getElementById('file-sub-text').textContent = `✓ Successfully read ${file.name} at ${timeStr}`;
+        
+        updateUI();
+        showToast(`✓ <strong>Successfully synced with ${file.name}</strong> [Sheet: <em>${matchedSheet}</em>]<br/>Extracted Income: £${budgetData.income.toLocaleString()} | Bills: £${Math.round(budgetData.bills).toLocaleString()} | Savings: £${Math.round(budgetData.savings).toLocaleString()}`);
+      } catch (err) {
+        console.error(err);
+        showToast(`⚠️ <strong>Sync Warning:</strong> Could not parse file layout. Error: ${err.message}`);
+      }
     };
     reader.readAsArrayBuffer(file);
   }
 
-  // Event Listeners for File Drop / Input
   const fileInput = document.getElementById('excel-input');
   fileInput.addEventListener('change', (e) => {
     if (e.target.files.length > 0) handleExcelFile(e.target.files[0]);
