@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Wealth Operating System v8.2 — Dynamic Recalculation Engine</title>
+<title>Wealth Operating System v8.3 — Savings-Linked Velocity Engine</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
@@ -226,6 +226,31 @@
   .metric-label { font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; }
   .metric-val { font-family: 'Space Mono', monospace; font-size: 1.4rem; font-weight: 700; color: var(--text); }
 
+  /* PROJECTION CONTROLS */
+  .proj-toggle-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .proj-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .proj-btn.active {
+    background: rgba(232, 255, 74, 0.12);
+    border-color: var(--accent);
+    color: var(--accent);
+    font-weight: 700;
+  }
+
   /* ALERTS & IMPACT */
   .alert-box { padding: 14px 16px; border-radius: 8px; font-size: 0.85rem; font-family: 'Space Mono', monospace; line-height: 1.5; }
   .alert-box.deficit { background: rgba(255, 107, 74, 0.1); border: 1px solid var(--orange); color: var(--orange); }
@@ -291,7 +316,7 @@
 
   <header>
     <div>
-      <div class="header-tag">// SERVE GOD WIDDIT — WEALTH OS V8.2</div>
+      <div class="header-tag">// SERVE GOD WIDDIT — WEALTH OS V8.3</div>
       <h1>Live Cloud Trajectory & Budget Engine</h1>
     </div>
     <div style="text-align: right;">
@@ -377,9 +402,17 @@
 
   <div class="budget-engine">
     <div class="section-title">Cloud-Driven Wealth Velocity Projections</div>
-    <div style="color:var(--muted); font-size:0.8rem; font-family:'Space Mono'; margin-bottom:12px;">
-      Simulating active savings (<span id="calc-monthly-sav">£0.00</span>/mo) compounding at 5.0% annual equity growth:
+    
+    <div class="proj-toggle-bar">
+      <button class="proj-btn active" id="btn-mode-save" onclick="setProjectionMode('save')">Pure Savings Pot (£<span id="mode-save-val">50.00</span>/mo)</button>
+      <button class="proj-btn" id="btn-mode-total" onclick="setProjectionMode('total')">Savings + Travel (£<span id="mode-total-val">350.00</span>/mo)</button>
+      <button class="proj-btn" id="btn-mode-buffer" onclick="setProjectionMode('buffer')">Buffer Reinvested (£<span id="mode-buffer-val">241.82</span>/mo)</button>
     </div>
+
+    <div style="color:var(--muted); font-size:0.8rem; font-family:'Space Mono'; margin-bottom:12px;">
+      Simulating <strong style="color:var(--accent);" id="calc-proj-label">Pure Savings Pot</strong> (<span id="calc-monthly-sav" style="color:var(--accent);">£50.00</span>/mo) compounding at 5.0% annual equity growth:
+    </div>
+
     <table class="table-mini">
       <thead>
         <tr>
@@ -396,35 +429,35 @@
           <td>£<span class="row-sav-val">0.00</span></td>
           <td>£<span id="proj-c-1">0</span></td>
           <td>£<span id="proj-v-1">0</span></td>
-          <td>Emergency Buffer Secured</td>
+          <td>Initial Reserve Seed</td>
         </tr>
         <tr>
           <td><strong>5 Years</strong></td>
           <td>£<span class="row-sav-val">0.00</span></td>
           <td>£<span id="proj-c-5">0</span></td>
           <td>£<span id="proj-v-5">0</span></td>
-          <td>First Property Deposit Readiness</td>
+          <td>Safety Capital Built</td>
         </tr>
         <tr>
           <td><strong>10 Years</strong></td>
           <td>£<span class="row-sav-val">0.00</span></td>
           <td>£<span id="proj-c-10">0</span></td>
           <td>£<span id="proj-v-10">0</span></td>
-          <td>Multi-Account Foundation & Family Pot</td>
+          <td>Compound Acceleration Phase</td>
         </tr>
         <tr>
           <td><strong>20 Years</strong></td>
           <td>£<span class="row-sav-val">0.00</span></td>
           <td>£<span id="proj-c-20">0</span></td>
           <td>£<span id="proj-v-20">0</span></td>
-          <td>Accelerated Freedom & ISA Independence</td>
+          <td>ISA & Independence Milestone</td>
         </tr>
         <tr>
           <td><strong>40 Years</strong></td>
           <td>£<span class="row-sav-val">0.00</span></td>
           <td>£<span id="proj-c-40">0</span></td>
           <td>£<span id="proj-v-40">0</span></td>
-          <td>Generational Stewardship Milestone</td>
+          <td>Generational Wealth Target</td>
         </tr>
       </tbody>
     </table>
@@ -471,12 +504,12 @@
   let goals = [
     { key: 'efund', label: 'Emergency Buffer (3-Mo Target)', cur: 1000, max: 3522, unit: '£', color: 'var(--green)' },
     { key: 'salary', label: 'Gross Salary Trajectory', cur: 29803, max: 50000, unit: '£', color: 'var(--accent)' },
-    { key: 'savings', label: 'Annual Active Savings Rate', cur: 4200, max: 12000, unit: '£', color: 'var(--blue)' },
+    { key: 'savings', label: 'Annual Active Savings Rate', cur: 600, max: 12000, unit: '£', color: 'var(--blue)' },
     { key: 'property', label: 'Property / Sinking Fund Pot', cur: 1500, max: 30000, unit: '£', color: 'var(--purple)' },
     { key: 'milestone', label: 'The £1,000,000 Portfolio Goal', cur: 4315, max: 1000000, unit: '£', color: 'var(--orange)' }
   ];
 
-  let budgetData = JSON.parse(localStorage.getItem('wos_v8_2_cloud')) || {
+  let budgetData = JSON.parse(localStorage.getItem('wos_v8_3_cloud')) || {
     gross: 29802.53,
     net: 23544.00,
     income: 1962.00,
@@ -490,10 +523,11 @@
     travel: 300.00,
     save: 50.00,
     remaining: 241.82,
-    goalsProgress: [1000, 29803, 4200, 1500, 4315],
+    goalsProgress: [1000, 29803, 600, 1500, 4315],
     lastUpdated: 'Cached Baseline'
   };
 
+  let currentProjectionMode = 'save'; // 'save' | 'total' | 'buffer'
   let editingIdx = null;
 
   function calculateFV(pmtMonthly, annualRate, years) {
@@ -503,7 +537,26 @@
     return pmtMonthly * ((Math.pow(1 + r, n) - 1) / r);
   }
 
-  function updateCompoundingTable(monthlySav) {
+  function setProjectionMode(mode) {
+    currentProjectionMode = mode;
+    document.querySelectorAll('.proj-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(`btn-mode-${mode}`).classList.add('active');
+    updateCompoundingTable();
+  }
+
+  function updateCompoundingTable() {
+    let monthlySav = Number(budgetData.save) || 0;
+    let label = 'Pure Savings Pot';
+
+    if (currentProjectionMode === 'total') {
+      monthlySav = (Number(budgetData.save) || 0) + (Number(budgetData.travel) || 0);
+      label = 'Total Savings + Travel Capacity';
+    } else if (currentProjectionMode === 'buffer') {
+      monthlySav = Number(budgetData.remaining) || 0;
+      label = 'Net Remaining Buffer Reinvestment';
+    }
+
+    document.getElementById('calc-proj-label').textContent = label;
     document.getElementById('calc-monthly-sav').textContent = '£' + monthlySav.toFixed(2);
     document.querySelectorAll('.row-sav-val').forEach(el => el.textContent = monthlySav.toFixed(2));
 
@@ -522,7 +575,7 @@
 
     goals[0].max = Math.max(1000, Math.round(budgetData.totalOutgoing * 3));
     goals[1].cur = Math.round(budgetData.gross);
-    goals[2].cur = Math.round((budgetData.travel + budgetData.save) * 12);
+    goals[2].cur = Math.round((budgetData.save) * 12);
 
     goals.forEach((g, i) => {
       const cur = budgetData.goalsProgress[i] !== undefined ? budgetData.goalsProgress[i] : g.cur;
@@ -569,7 +622,6 @@
     const outgoings = Number(budgetData.totalOutgoing);
     const travel = Number(budgetData.travel);
     const save = Number(budgetData.save);
-    const monthlySav = travel + save;
     const remaining = Number(budgetData.remaining);
 
     document.getElementById('disp-income').textContent = inc.toLocaleString('en-GB', { minimumFractionDigits: 2 });
@@ -584,21 +636,25 @@
     document.getElementById('sync-save-txt').textContent = save.toFixed(2);
     document.getElementById('sync-rem-txt').textContent = remaining.toFixed(2);
 
+    document.getElementById('mode-save-val').textContent = save.toFixed(2);
+    document.getElementById('mode-total-val').textContent = (save + travel).toFixed(2);
+    document.getElementById('mode-buffer-val').textContent = remaining.toFixed(2);
+
     const alertBox = document.getElementById('gap-alert');
     if (remaining < 0) {
       alertBox.className = 'alert-box deficit';
       alertBox.innerHTML = `⚠️ <strong>Trajectory Deficit:</strong> Outgoings exceed income by <strong>£${Math.abs(remaining).toFixed(2)}/mo</strong>.`;
     } else {
       alertBox.className = 'alert-box surplus';
-      alertBox.innerHTML = `✓ <strong>Trajectory Solvent:</strong> Live cloud stream active. Monthly buffer: <strong>£${remaining.toFixed(2)}/mo</strong> (13.7% safety cushion).`;
+      alertBox.innerHTML = `✓ <strong>Trajectory Solvent:</strong> Live cloud stream active. Monthly buffer: <strong>£${remaining.toFixed(2)}/mo</strong>.`;
     }
 
     document.getElementById('sync-status').textContent = `Status: ${budgetData.lastUpdated}`;
-    updateCompoundingTable(monthlySav);
+    updateCompoundingTable();
     renderTrajectoryCards();
   }
 
-  // SMART MULTI-ROW & MULTI-COLUMN FINDER
+  // MULTI-ROW & MULTI-COLUMN FINDER
   function findNumberNearLabelInGrid(grid, labelSearchTerms, maxRowLookahead = 5) {
     for (let r = 0; r < grid.length; r++) {
       const row = grid[r];
@@ -607,12 +663,12 @@
         const cell = String(row[c] || '').toLowerCase().trim();
         for (let term of labelSearchTerms) {
           if (cell === term || (cell.includes(term) && cell.length < term.length + 15)) {
-            // 1. Check right on same row
+            // Check same row
             for (let offset = 1; offset <= 4; offset++) {
               const val = parseFloat(row[c + offset]);
               if (!isNaN(val) && val > 0) return { val, r, c: c + offset };
             }
-            // 2. Check down up to maxRowLookahead rows
+            // Check downward rows
             for (let rowOffset = 1; rowOffset <= maxRowLookahead; rowOffset++) {
               if (grid[r + rowOffset]) {
                 for (let colOffset = 0; colOffset <= 3; colOffset++) {
@@ -655,7 +711,6 @@
     if (travelFound) { budgetData.travel = travelFound.val; logs.push(`Travel Pot -> £${travelFound.val}`); }
     if (saveFound) { budgetData.save = saveFound.val; logs.push(`Save Pot -> £${saveFound.val}`); }
 
-    // DYNAMIC MATHEMATICAL RECALCULATION (Guarantees values are never frozen)
     if (!titheFound) budgetData.tithe = budgetData.income * 0.10;
     budgetData.stewardship = budgetData.income - budgetData.tithe;
 
@@ -676,16 +731,16 @@
     }
 
     budgetData.goalsProgress[1] = Math.round(budgetData.gross);
-    budgetData.goalsProgress[2] = Math.round((budgetData.travel + budgetData.save) * 12);
+    budgetData.goalsProgress[2] = Math.round((budgetData.save) * 12);
 
     const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     budgetData.lastUpdated = `${logPrefix} @ ${timeStr}`;
-    localStorage.setItem('wos_v8_2_cloud', JSON.stringify(budgetData));
+    localStorage.setItem('wos_v8_3_cloud', JSON.stringify(budgetData));
 
     document.getElementById('debug-console').textContent = `[${timeStr}] Sync Success:\n` + logs.join('\n');
   }
 
-  // RESILIENT CLOUD FETCH (Direct + CORS Proxy)
+  // RESILIENT CLOUD FETCH
   async function fetchLiveCloudData(force = false) {
     const indicator = document.getElementById('sync-indicator');
     const statusText = document.getElementById('sync-status');
@@ -787,7 +842,7 @@
   function saveProgress() {
     if (editingIdx !== null) {
       budgetData.goalsProgress[editingIdx] = +document.getElementById('modal-slider').value;
-      localStorage.setItem('wos_v8_2_cloud', JSON.stringify(budgetData));
+      localStorage.setItem('wos_v8_3_cloud', JSON.stringify(budgetData));
       renderTrajectoryCards();
       closeModal();
     }
@@ -809,7 +864,7 @@
     if (e.dataTransfer.files.length > 0) handleExcelFile(e.dataTransfer.files[0]);
   });
 
-  // Fetch immediately
+  // Run on startup
   fetchLiveCloudData();
 </script>
 </body>
